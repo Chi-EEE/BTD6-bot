@@ -87,3 +87,15 @@ double Memory::GetDoubleFromOffsets(HANDLE handle, DWORD64 baseAddress, DWORD64 
 	}
 	return value;
 }
+
+float Memory::GetFloatFromOffsets(HANDLE handle, DWORD64 baseAddress, DWORD64 firstOffset, std::vector<DWORD64> offsets, DWORD64 finalOffset)
+{
+	float value = 0;
+	DWORD64 finalAddress = ReadOffsets(handle, baseAddress, firstOffset, offsets, finalOffset);
+	bool success = ReadProcessMemory(handle, (PVOID)(finalAddress), &value, sizeof(value), NULL);
+	if (!success)
+	{
+		std::cout << "Couldn't find value from offsets!" << std::endl;
+	}
+	return value;
+}
