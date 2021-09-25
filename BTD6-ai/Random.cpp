@@ -28,5 +28,5 @@ int Random::GetValue(int min, int max)
         (std::mt19937::max() - 5) % 6)
     { /* bad value retrieved so get next one */
     }
-    return (n % (max - min + 1)) + min;
+    return n % (max - min + 1) + min;
 }

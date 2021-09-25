@@ -1,4 +1,7 @@
 #include "Window.h"
+#include <stdexcept>
+#include <limits>
+#include <iostream>
 
 HWND Window::GetHwnd(const char* windowName)
 {
@@ -6,7 +9,6 @@ HWND Window::GetHwnd(const char* windowName)
 	if (!hwnd)
 	{
 		std::cout << "Process Window not found: " << windowName << std::endl;
-		throw std::runtime_error("Process Window not found!");
 	}
 	return hwnd;
 }

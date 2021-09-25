@@ -142,16 +142,16 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="ProcessMemory.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Keyboard.h" />
-    <ClInclude Include="Memory.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="ProcessMemory.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
