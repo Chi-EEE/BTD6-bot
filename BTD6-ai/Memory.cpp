@@ -5,20 +5,14 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 
-DWORD Memory::GetProcessId(const char *windowName)
+DWORD Memory::GetProcessId(const HWND hwnd)
 {
-	HWND hwnd = FindWindowA(NULL, windowName);
-	if (!hwnd)
-	{
-		std::cout << "Process Window not found: " << windowName << std::endl;
-		throw std::runtime_error("Process window not found !");
-	}
-
 	DWORD pId = 0;
 	GetWindowThreadProcessId(hwnd, &pId);
 	return pId;
 }
 
+//https://forum.cheatengine.org/viewtopic.php?t=563414
 uintptr_t Memory::GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
 {
 	uintptr_t modBaseAddr = 0;
@@ -54,6 +48,7 @@ HANDLE Memory::GetHandle(DWORD procId)
 	return handle;
 }
 
+//https://www.cheatengine.org/forum/viewtopic.php?t=594721&sid=ae3fce06e7e08b8cae23afd8c2141974
 DWORD64 Memory::ReadOffsets(HANDLE handle, DWORD64 baseAddress, DWORD64 firstOffset, std::vector<DWORD64> offsets, DWORD64 finalOffset)
 {
 	DWORD64 finalAddress = 0;
