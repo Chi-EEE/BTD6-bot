@@ -2,32 +2,23 @@
 #include <Windows.h>
 #include <iostream>
 
-void Keyboard::keyPress(WORD keyCode)
+INPUT Keyboard::keyPress(WORD scanCode)
 {
 	//Generic key event
 	INPUT input;
 	input.type = INPUT_KEYBOARD;
-	input.ki.wScan = 0;
-	input.ki.time = 0;
-	input.ki.dwExtraInfo = 0;
+	input.ki.wScan = scanCode;
 
-	input.ki.wVk = keyCode;
-	input.ki.dwFlags = 0;
+	input.ki.wVk = NULL;
+	input.ki.dwFlags = KEYEVENTF_SCANCODE;
 
 	SendInput(1, &input, sizeof(INPUT));
-	std::cout << "pressed\n";
+	return input;
 }
 
-void Keyboard::keyRelease(WORD keyCode)
+void Keyboard::keyRelease(INPUT input)
 {
-	INPUT input;
-	input.type = INPUT_KEYBOARD;
-	input.ki.wScan = 0;
-	input.ki.time = 0;
-	input.ki.dwExtraInfo = 0;
-
-	input.ki.wVk = keyCode;
-	input.ki.dwFlags = KEYEVENTF_KEYUP;
+	input.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
 
 	SendInput(1, &input, sizeof(INPUT));
 }

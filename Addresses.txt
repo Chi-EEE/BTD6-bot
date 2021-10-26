@@ -1,0 +1,9 @@
+25E75B41118 = Value = 850
+
+25E75527C10 -> 25E75B41118 + 28 = 25E75B41118 
+
+base ptr -> 25E75527C00 + 10 = 25E75527C00
+ 
+GameAssembly.dll+1FA7918 -> 25E76A21730 + 30 = 25E76A21730
+
+static base -> address + offset1 = address

@@ -41,6 +41,8 @@ const WORD TOWER_KEY_CODE[23] =
     0x4C
 };
 
+UINT TOWER_SCAN_CODE[23];
+
 const std::string TOWER_NAME[23] =
 {
     "Hero",
@@ -70,6 +72,7 @@ const std::string TOWER_NAME[23] =
 
 const int ALLOWED_TOWERS[] =
 {
+    1,
     3,
     16
 };
@@ -84,17 +87,27 @@ const int TOWER_UPGRADE[23][3][5] =
     }
 };
 
-DWORD64 money_firstOffset = 0x020F2890;
+//GameAssembly.dll+23C7EE0 0 98 e0
+//// 28/30
+//DWORD64 money_firstOffset = 0x021071E8;
+//DWORD64 money_finalOffset = 0x28;
+//std::vector<DWORD64> money_offsets = { 0x80, 0x218, 0x230, 0x18, 0x30, 0x10 };
+
+DWORD64 money_firstOffset = 0x021071E8;
 DWORD64 money_finalOffset = 0x28;
-std::vector<DWORD64> money_offsets = { 0x30, 0x88, 0x18, 0xD8, 0x30, 0x10 };
+std::vector<DWORD64> money_offsets = { 0x48, 0xA8, 0x230, 0x18, 0x30, 0x10 };
+
 
 const DWORD64 lives_firstOffset = 0x023E3F70;
 const DWORD64 lives_finalOffset = 0x20;
 const std::vector<DWORD64> lives_offsets = { 0xB8, 0x0, 0x198, 0x68, 0x30, 0x20 };
 
-const DWORD64 rounds_firstOffset = 0x023E3F70;
-const DWORD64 rounds_finalOffset = 0x20;
-const std::vector<DWORD64> rounds_offsets = { 0xB8, 0x0, 0x198, 0x68, 0x28, 0x20 };
+const DWORD64 rounds_firstOffset = 0x23C7EE0;
+const DWORD64 rounds_finalOffset = 0x30;
+const std::vector<DWORD64> rounds_offsets = { 0x0, 0x98, 0xE0 };
+//const DWORD64 rounds_firstOffset = 0x023E3F70;
+//const DWORD64 rounds_finalOffset = 0x20;
+//const std::vector<DWORD64> rounds_offsets = { 0xB8, 0x0, 0x198, 0x68, 0x28, 0x20 };
 
 int main()
 {
@@ -106,63 +119,73 @@ int main()
     Mouse mouse = Mouse{};
     Keyboard keyboard = Keyboard{};
 
-    std::cout << "Waiting 5 seconds" << std::endl;
-    clock.wait(5.f);
+	for (short i = 0; i < 23; i++)
+	{
+		TOWER_SCAN_CODE[i] = MapVirtualKeyA(TOWER_KEY_CODE[i], 4);
+	}
+
+    //std::cout << "Waiting 5 seconds" << std::endl;
+    //clock.wait(5.f);
     HWND hwnd = window.GetHwnd("BloonsTD6");
-    if (hwnd)
-    {
-        DWORD64 processId = memory.GetProcessId(hwnd);
-        uintptr_t moduleBaseAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");
-        HANDLE handle = memory.GetHandle(processId);
+	if (hwnd)
+	{
+		DWORD64 processId = memory.GetProcessId(L"BloonsTD6.exe");
+		//uintptr_t moduleBaseAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");
 
-        RECT clientPosition = window.GetRect();
-        RECT clientSize = window.GetSizeRect();
+		RECT clientPosition = window.GetRect();
+		RECT clientSize = window.GetSizeRect();
 
-        clientPosition = RECT{ clientPosition.left + x_offset, clientPosition.top + y_offset, clientPosition.right, clientPosition.bottom}; //Top left corner of window
-        clientSize = RECT{ 0, 0, clientSize.right - x_offset - x_minus_offset, clientSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
+		clientPosition = RECT{ clientPosition.left + x_offset, clientPosition.top + y_offset, clientPosition.right, clientPosition.bottom }; //Top left corner of window
+		clientSize = RECT{ 0, 0, clientSize.right - x_offset - x_minus_offset, clientSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
 
-        const int x_out = clientSize.left + 178;
-        const int y_out = clientSize.top + 101;
-        std::cout << clientPosition.left << " " << clientPosition.top << std::endl;
-        std::cout << clientSize.right << " " << clientSize.bottom << std::endl;
+		const int x_out = clientSize.right + 200;
+		const int y_out = clientSize.bottom + 101;
+		/*  std::cout << clientPosition.left << " " << clientPosition.top << std::endl;
+		  std::cout << clientSize.right << " " << clientSize.bottom << std::endl;*/
+		HANDLE handle = memory.GetHandle(processId);
+		memory.InitaliseMemoryRegions(handle);
+		int previousRound = 0;
 
-        int times = 10;
-        int previousRound = 0;
-        double lives = memory.GetFloatFromOffsets(handle, moduleBaseAddress, lives_firstOffset, lives_offsets, lives_finalOffset);
-        while (times >= 1)
-        {
-            int currentRound = memory.GetIntFromOffsets(handle, moduleBaseAddress, rounds_firstOffset, rounds_offsets, rounds_finalOffset);
-            if (previousRound != currentRound)
-            {
-                double money = memory.GetDoubleFromOffsets(handle, moduleBaseAddress, money_firstOffset, money_offsets, money_finalOffset);
-                while (money > 500)
-                {
-                    const int TOWER_INDEX = ALLOWED_TOWERS[random.GetValue(1, 2) - 1];
-                    int x_axis = clientPosition.left + random.GetValue(1, clientSize.right);
-                    int y_axis = clientPosition.top + random.GetValue(1, clientSize.bottom);
-                    std::cout << "Placing " << TOWER_NAME[TOWER_INDEX] << " at " << x_axis << ", " << y_axis << std::endl;
 
-                    keyboard.keyPress(TOWER_KEY_CODE[TOWER_INDEX]);
+		while (true)
+		{
+			for (Region region : memory.GetMemoryRegions())
+			{
+				char* address = memory.ScanForDoubleValue(handle, 650, region.BaseAddress, region.Size);
+				if (address)
+				{
+					double money;
+					while (true)
+					{
+						ReadProcessMemory(handle, address, &money, sizeof(money), NULL);
+						while (money > 500)
+						{
+							std::cout << money << "\n";
+							const int TOWER_INDEX = ALLOWED_TOWERS[random.GetValue(1, 3) - 1];
+							int x_axis = clientPosition.left + random.GetValue(1, clientSize.right);
+							int y_axis = clientPosition.top + random.GetValue(1, clientSize.bottom);
+							std::cout << "Placing " << TOWER_NAME[TOWER_INDEX] << " at " << x_axis << ", " << y_axis << std::endl;
 
-                    mouse.setPosition(x_axis, y_axis);
-                    mouse.leftMouseDown();
+							INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[TOWER_INDEX]);
 
-                    clock.wait(0.1f);
-                    keyboard.keyRelease(TOWER_KEY_CODE[TOWER_INDEX]);
-                    mouse.leftMouseUp();
-                    mouse.setPosition(x_out, y_out);
+							mouse.setPosition(x_axis, y_axis);
+							mouse.leftMouseDown();
 
-                    clock.wait(0.5f);
-                    times--;
-                }
-            }
-            clock.wait(0.5f);
-            lives = memory.GetFloatFromOffsets(handle, moduleBaseAddress, lives_firstOffset, lives_offsets, lives_finalOffset);
-            if (lives <= 0)
-            {
-                break;
-            }
-        }
-    }
-    return 1;
+							clock.wait(.1f);
+							keyboard.keyRelease(input);
+							mouse.leftMouseUp();
+							mouse.setPosition(x_out, y_out);
+
+							ReadProcessMemory(handle, address, &money, sizeof(money), NULL);
+
+							clock.wait(0.5f);
+						}
+					}
+				}
+			}
+			if (handle)
+				CloseHandle(handle);
+		}
+	}
+	return 1;
 }

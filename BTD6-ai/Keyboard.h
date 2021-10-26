@@ -4,8 +4,7 @@
 class Keyboard
 {
 public:
-	void keyPress(WORD keyCode);
-	void keyRelease(WORD keyCode);
+	INPUT keyPress(WORD scanCode);
+	void keyRelease(INPUT input);
 private:
 };
-
