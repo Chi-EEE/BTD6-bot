@@ -24,7 +24,7 @@ public:
 
 	//DWORD GetProcessId(const HWND hwnd);
 	DWORD GetProcessId(const TCHAR* procName);
-	uintptr_t GetModuleBaseAddress(DWORD procId, const wchar_t* modName);
+	void GetModuleBaseAddress(DWORD procId, const wchar_t* modName);
 	HANDLE GetHandle(DWORD procId);
 	void InitaliseMemoryRegions(HANDLE &handle);
 	char* ScanForDoubleValue(HANDLE handle, double answer, char* baseAddress, intptr_t size);

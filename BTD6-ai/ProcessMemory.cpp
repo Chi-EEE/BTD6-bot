@@ -45,7 +45,7 @@ DWORD ProcessMemory::GetProcessId(const TCHAR* procName)
 
 
 //https://forum.cheatengine.org/viewtopic.php?t=563414
-uintptr_t ProcessMemory::GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
+void ProcessMemory::GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
 {
 	uintptr_t modBaseAddr = 0;
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
@@ -59,19 +59,22 @@ uintptr_t ProcessMemory::GetModuleBaseAddress(DWORD procId, const wchar_t* modNa
 			{
 				if (!_wcsicmp(modEntry.szModule, modName))
 				{
-					modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
+					Region newRegion;
+					newRegion.BaseAddress = (char*)modEntry.modBaseAddr;
+					newRegion.Size = modEntry.modBaseSize;
+					regions.push_back(newRegion);
+					CloseHandle(hSnap);
 					break;
 				}
 			} while (Module32Next(hSnap, &modEntry));
 		}
 	}
 	CloseHandle(hSnap);
-	return modBaseAddr;
 }
 
 HANDLE ProcessMemory::GetHandle(DWORD procId)
 {
-	HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, procId);
+	HANDLE handle = OpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, procId);
 	if (!handle)
 	{
 		std::cout << "Cannot open process!" << std::endl;

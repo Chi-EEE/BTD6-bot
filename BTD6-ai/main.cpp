@@ -144,9 +144,10 @@ int main()
 		  std::cout << clientSize.right << " " << clientSize.bottom << std::endl;*/
 		HANDLE handle = memory.GetHandle(processId);
 		memory.InitaliseMemoryRegions(handle);
+		//memory.GetModuleBaseAddress(processId, L"BloonsTD6.exe");
 		int previousRound = 0;
 
-
+		// (void*) converts char* to address string
 		while (true)
 		{
 			for (Region region : memory.GetMemoryRegions())
@@ -154,6 +155,8 @@ int main()
 				char* address = memory.ScanForDoubleValue(handle, 650, region.BaseAddress, region.Size);
 				if (address)
 				{
+					std::cout << (void*)address << "\n";
+					/*
 					double money;
 					while (true)
 					{
@@ -181,10 +184,9 @@ int main()
 							clock.wait(0.5f);
 						}
 					}
+					// */
 				}
 			}
-			if (handle)
-				CloseHandle(handle);
 		}
 	}
 	return 1;
