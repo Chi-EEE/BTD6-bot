@@ -156,6 +156,9 @@ int main()
 				if (address)
 				{
 					std::cout << (void*)address << "\n";
+					return 1;
+					// Search for: address - 28 = Cash Manager
+					// CashManager - 10 = Entry??
 					/*
 					double money;
 					while (true)
