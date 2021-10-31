@@ -1,0 +1,18 @@
+1DFF197CFC8 = Cash Konfuze - 28
+1DF F197 CFA0 = Cash Konfuze X
+Search
+1DFF197B9A0 = Cash Manager - 10 X
+1DF F197 B990 = Cash Manager X
+Search
+1DFDC1DB030 = Cash Managers - 30 X
+1DF DC1D B000 = Cash Managers X / Entrys
+Search -- Following can have multiple dictonaries
+1DFF1474318 = ?? // Dictonary - 18
+1DFF1474300 = Dictionary
+Search
+1DFF148DEC8 = Simulation - 248
+Difference = 248
+
+1DF F148 DC80 = Simulation
+
+Target Simulation = ??

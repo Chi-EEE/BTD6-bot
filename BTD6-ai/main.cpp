@@ -159,7 +159,7 @@ int main()
 					return 1;
 					// Search for: address - 28 = Cash Manager
 					// CashManager - 10 = Entry??
-					/*
+					/*{
 					double money;
 					while (true)
 					{
@@ -192,5 +192,6 @@ int main()
 			}
 		}
 	}
+	system("Pause");
 	return 1;
 }
