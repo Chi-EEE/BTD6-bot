@@ -97,18 +97,41 @@ Window window = Window{};
 //Mouse mouse = Mouse{};
 //Keyboard keyboard = Keyboard{};
 
-std::vector<long> offsetsFromCash = { -0x28, -0x10, -0x30, -0x18, -0x248 };
+//std::vector<long> offsetsFromCash = { -0x28, -0x10, -0x30, /**/-0x18, -0x248};
 
-template <class T>
-char* scanLinear(HANDLE handle, T startingValue, std::vector<T> offsets)
+int offsetsFromCash1[] = { -0x28, -0x10 };
+int offsetsFromCash2[] = { -0x30, -0x18, -0x248 };
+//std::vector<T>
+template <typename T, size_t size> char* scanLinear(HANDLE handle, char* startingValue, const T(&offsets)[size])
 {
-	char* addresses = nullptr;
-	addresses = memory.ScanForValue(handle, startingValue);
-	for (T offset : offsets)
+	char* value = startingValue;
+	for (size_t i = 0; i < size; i++)
 	{
-		addresses = memory.ScanForValue(handle, offset);
+		std::cout << reinterpret_cast<intptr_t>(value) + offsets[i] << "\n";
+		value = memory.ScanForValue(handle, reinterpret_cast<intptr_t>(value) + offsets[i]);
 	}
-	return dictonaryAddresses;
+	return value;
+}
+
+char* getSimulationAddress(HANDLE handle)
+{
+	char* cashValueAddress = memory.ScanForValue(handle, 650.0);
+	char* entryOffsetAddress = scanLinear(handle, cashValueAddress, offsetsFromCash1);
+
+	std::vector<char*> dictonaryAddresses = {};
+	memory.ScanForValues(handle, (reinterpret_cast<intptr_t>(entryOffsetAddress) + offsetsFromCash2[0]), dictonaryAddresses);
+
+	char* validDictonaryAddress = nullptr;
+	for (char* dictonaryAddress : dictonaryAddresses)
+	{
+		char* simulationOffsetAddress = memory.ScanForValue(handle, (reinterpret_cast<intptr_t>(dictonaryAddress) + offsetsFromCash2[1]));
+		if (simulationOffsetAddress)
+		{
+			validDictonaryAddress = simulationOffsetAddress;
+			break;
+		}
+	}
+	return (char*)(reinterpret_cast<intptr_t>(validDictonaryAddress + offsetsFromCash2[2]));
 }
 
 int main()
@@ -132,10 +155,10 @@ int main()
 		clientPosition = RECT{ clientPosition.left + x_offset, clientPosition.top + y_offset, clientPosition.right, clientPosition.bottom }; //Top left corner of window
 		clientSize = RECT{ 0, 0, clientSize.right - x_offset - x_minus_offset, clientSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
 
+		//Gets the play screen spze size
 		const int x_out = clientSize.right + 200;
 		const int y_out = clientSize.bottom + 101;
-		/*  std::cout << clientPosition.left << " " << clientPosition.top << std::endl;
-		  std::cout << clientSize.right << " " << clientSize.bottom << std::endl;*/
+
 		HANDLE handle = Memory::GetHandle(processId);
 		memory.InitaliseMemoryRegions(handle);
 		//memory.GetModuleBaseAddress(processId, L"BloonsTD6.exe");
@@ -143,15 +166,9 @@ int main()
 
 		//reinterpret_cast<std::uintptr_t> method to convert char* to number / void* to string
 		// (void*) converts char* to address string
-		int regionIndex = 0;
-		char* cashValueAddress = scan(handle, 650.0);
-		char* cashValueAddress = scan(handle, reinterpret_cast<uintptr_t>(cashValueAddress) + offsetsFromCash[0]);
-		char* cashValueAddress = scan(handle, 650.0);
-		char* cashValueAddress = scan(handle, 650.0);
-		char* cashValueAddress = scan(handle, 650.0);
-		char* cashValueAddress = scan(handle, 650.0);
-		char* cashValueAddress = scan(handle, 650.0);
-		char* cashValueAddress = scan(handle, 650.0);
+
+		std::cout << (void*)getSimulationAddress(handle) << "\n";
+
 		//cashValueAddress = memory.ScanForValue(handle, 650.0);// reinterpret_cast<uintptr_t>(address) + offsetsFromCash[2]
 		/*if (cashValueAddress)
 		{
@@ -175,6 +192,5 @@ int main()
 			}
 		}*/
 	}
-	system("Pause");
 	return 1;
 }

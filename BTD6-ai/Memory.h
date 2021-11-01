@@ -122,8 +122,6 @@ public:
 	/// </summary>
 	/// <param name="handle"></param>
 	/// <param name="answer"></param>
-	/// <param name="baseAddress">Base address of memory region</param>
-	/// <param name="size">Size of the memory region</param>
 	/// <returns></returns>
 	template <class T>
 	char* ScanForValue(HANDLE handle, T answer)
@@ -163,11 +161,9 @@ public:
 	/// </summary>
 	/// <param name="handle"></param>
 	/// <param name="answer"></param>
-	/// <param name="baseAddress">Base address of memory region</param>
-	/// <param name="size">Size of the memory region</param>
 	/// <returns></returns>
 	template <class T>
-	char* ScanForValue(HANDLE handle, T answer)
+	void ScanForValues(HANDLE handle, T answer, std::vector <char*> &results)
 	{
 		int regionIndex = 0;
 		char* baseAddress = NULL;
@@ -185,7 +181,7 @@ public:
 				{
 					if (value == answer)
 					{
-						return curr;
+						results.push_back(curr);
 					}
 				}
 			}
@@ -195,7 +191,6 @@ public:
 				break;
 			}
 		}
-		return nullptr;
 	}
 private:
 	std::vector<Region> regions;
