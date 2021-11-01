@@ -1,8 +1,10 @@
 #include <windows.h>
 #include <iostream>
 #include <string>
+#include <cstdint> // temp
 
-#include "ProcessMemory.h"
+#include "Memory.h"
+//#include "ProcessMemory.h"
 #include "Window.h"
 #include "Random.h"
 #include "Mouse.h"
@@ -87,38 +89,30 @@ const int TOWER_UPGRADE[23][3][5] =
     }
 };
 
-//GameAssembly.dll+23C7EE0 0 98 e0
-//// 28/30
-//DWORD64 money_firstOffset = 0x021071E8;
-//DWORD64 money_finalOffset = 0x28;
-//std::vector<DWORD64> money_offsets = { 0x80, 0x218, 0x230, 0x18, 0x30, 0x10 };
+Memory memory = Memory{};
+Window window = Window{};
+//Random random = Random{};
+//Clock clock = Clock{};
+//
+//Mouse mouse = Mouse{};
+//Keyboard keyboard = Keyboard{};
 
-DWORD64 money_firstOffset = 0x021071E8;
-DWORD64 money_finalOffset = 0x28;
-std::vector<DWORD64> money_offsets = { 0x48, 0xA8, 0x230, 0x18, 0x30, 0x10 };
+std::vector<long> offsetsFromCash = { -0x28, -0x10, -0x30, -0x18, -0x248 };
 
-
-const DWORD64 lives_firstOffset = 0x023E3F70;
-const DWORD64 lives_finalOffset = 0x20;
-const std::vector<DWORD64> lives_offsets = { 0xB8, 0x0, 0x198, 0x68, 0x30, 0x20 };
-
-const DWORD64 rounds_firstOffset = 0x23C7EE0;
-const DWORD64 rounds_finalOffset = 0x30;
-const std::vector<DWORD64> rounds_offsets = { 0x0, 0x98, 0xE0 };
-//const DWORD64 rounds_firstOffset = 0x023E3F70;
-//const DWORD64 rounds_finalOffset = 0x20;
-//const std::vector<DWORD64> rounds_offsets = { 0xB8, 0x0, 0x198, 0x68, 0x28, 0x20 };
+template <class T>
+char* scanLinear(HANDLE handle, T startingValue, std::vector<T> offsets)
+{
+	char* addresses = nullptr;
+	addresses = memory.ScanForValue(handle, startingValue);
+	for (T offset : offsets)
+	{
+		addresses = memory.ScanForValue(handle, offset);
+	}
+	return dictonaryAddresses;
+}
 
 int main()
 {
-    Window window = Window{};
-    ProcessMemory memory = ProcessMemory{};
-    Random random = Random{};
-    Clock clock = Clock{};
-
-    Mouse mouse = Mouse{};
-    Keyboard keyboard = Keyboard{};
-
 	for (short i = 0; i < 23; i++)
 	{
 		TOWER_SCAN_CODE[i] = MapVirtualKeyA(TOWER_KEY_CODE[i], 4);
@@ -129,7 +123,7 @@ int main()
     HWND hwnd = window.GetHwnd("BloonsTD6");
 	if (hwnd)
 	{
-		DWORD64 processId = memory.GetProcessId(L"BloonsTD6.exe");
+		DWORD64 processId = Memory::GetProcessId(L"BloonsTD6.exe");
 		//uintptr_t moduleBaseAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");
 
 		RECT clientPosition = window.GetRect();
@@ -142,55 +136,44 @@ int main()
 		const int y_out = clientSize.bottom + 101;
 		/*  std::cout << clientPosition.left << " " << clientPosition.top << std::endl;
 		  std::cout << clientSize.right << " " << clientSize.bottom << std::endl;*/
-		HANDLE handle = memory.GetHandle(processId);
+		HANDLE handle = Memory::GetHandle(processId);
 		memory.InitaliseMemoryRegions(handle);
 		//memory.GetModuleBaseAddress(processId, L"BloonsTD6.exe");
 		int previousRound = 0;
 
+		//reinterpret_cast<std::uintptr_t> method to convert char* to number / void* to string
 		// (void*) converts char* to address string
-		while (true)
+		int regionIndex = 0;
+		char* cashValueAddress = scan(handle, 650.0);
+		char* cashValueAddress = scan(handle, reinterpret_cast<uintptr_t>(cashValueAddress) + offsetsFromCash[0]);
+		char* cashValueAddress = scan(handle, 650.0);
+		char* cashValueAddress = scan(handle, 650.0);
+		char* cashValueAddress = scan(handle, 650.0);
+		char* cashValueAddress = scan(handle, 650.0);
+		char* cashValueAddress = scan(handle, 650.0);
+		char* cashValueAddress = scan(handle, 650.0);
+		//cashValueAddress = memory.ScanForValue(handle, 650.0);// reinterpret_cast<uintptr_t>(address) + offsetsFromCash[2]
+		/*if (cashValueAddress)
 		{
-			for (Region region : memory.GetMemoryRegions())
+			std::cout << (void*)cashValueAddress << "\n";
+			char* cashManagerAddress = nullptr;
+			cashManagerAddress = memory.ScanForValue(handle, reinterpret_cast<uintptr_t>(cashValueAddress) + offsetsFromCash[0]);
+			if (cashManagerAddress)
 			{
-				char* address = memory.ScanForDoubleValue(handle, 650, region.BaseAddress, region.Size);
-				if (address)
+				char* entryAddress = nullptr;
+				entryAddress = memory.ScanForValue(handle, reinterpret_cast<uintptr_t>(cashManagerAddress) + offsetsFromCash[1]);
+				if (entryAddress)
 				{
-					std::cout << (void*)address << "\n";
-					return 1;
-					// Search for: address - 28 = Cash Manager
-					// CashManager - 10 = Entry??
-					/*{
-					double money;
-					while (true)
+					std::cout << (void*)entryAddress << "\n";
+					char* dictonaryAddresses = nullptr;
+					dictonaryAddresses = memory.ScanForValue(handle, reinterpret_cast<uintptr_t>(entryAddress) + offsetsFromCash[2]);
+					if (dictonaryAddresses)
 					{
-						ReadProcessMemory(handle, address, &money, sizeof(money), NULL);
-						while (money > 500)
-						{
-							std::cout << money << "\n";
-							const int TOWER_INDEX = ALLOWED_TOWERS[random.GetValue(1, 3) - 1];
-							int x_axis = clientPosition.left + random.GetValue(1, clientSize.right);
-							int y_axis = clientPosition.top + random.GetValue(1, clientSize.bottom);
-							std::cout << "Placing " << TOWER_NAME[TOWER_INDEX] << " at " << x_axis << ", " << y_axis << std::endl;
-
-							INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[TOWER_INDEX]);
-
-							mouse.setPosition(x_axis, y_axis);
-							mouse.leftMouseDown();
-
-							clock.wait(.1f);
-							keyboard.keyRelease(input);
-							mouse.leftMouseUp();
-							mouse.setPosition(x_out, y_out);
-
-							ReadProcessMemory(handle, address, &money, sizeof(money), NULL);
-
-							clock.wait(0.5f);
-						}
+						std::cout << (void*)dictonaryAddresses << "\n";
 					}
-					// */
 				}
 			}
-		}
+		}*/
 	}
 	system("Pause");
 	return 1;
