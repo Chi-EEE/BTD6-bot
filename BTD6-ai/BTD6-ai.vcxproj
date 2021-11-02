@@ -144,6 +144,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="Tower.cpp" />
+    <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +155,8 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Region.h" />
+    <ClInclude Include="Tower.h" />
+    <ClInclude Include="Vector2.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

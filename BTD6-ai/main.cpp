@@ -15,6 +15,13 @@ const int x_minus_offset = 232;
 
 const int y_offset = 61;
 
+const int ALLOWED_TOWERS[] =
+{
+	1,
+	3,
+	16
+};
+
 const WORD TOWER_KEY_CODE[23] =
 {
 	0x55,
@@ -71,16 +78,17 @@ const std::string TOWER_NAME[23] =
 	"Engineer Monkey"
 };
 
-const int ALLOWED_TOWERS[] =
-{
-	1,
-	3,
-	16
-};
-
 // Easy = .85 math floor 5
 // hard = 1.08 math floor 5
 // impoppable = 1.20 math floor 5
+// static_cast<int>(((TOWER_UPGRADE[1][0][i] * 0.85) + 2.5)/ 5) * 5;
+const float DIFFICULTY[4] =
+{
+	0.85f,
+	1.f,
+	1.08f,
+	1.20f
+};
 const int TOWER_UPGRADE[23][3][5] =
 {
 	//Hero
@@ -277,7 +285,7 @@ int main()
 		// (void*) converts char* to address string
 
 		std::cout << (void*)getSimulationAddress(handle) << "\n";
-
+		int difficulty = 0;
 	}
 	return 1;
 }
