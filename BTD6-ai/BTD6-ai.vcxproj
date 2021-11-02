@@ -143,7 +143,6 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
-    <ClCompile Include="ProcessMemory.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -152,7 +151,6 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Mouse.h" />
-    <ClInclude Include="ProcessMemory.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Region.h" />
     <ClInclude Include="Window.h" />
