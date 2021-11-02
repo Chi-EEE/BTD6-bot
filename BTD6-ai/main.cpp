@@ -79,13 +79,52 @@ const int ALLOWED_TOWERS[] =
     16
 };
 
-const int TOWER_UPGRADE[23][3][5] =
+const int TOWER_UPGRADE[23][4][3][5] =
 {
     //Hero
     {
-        {0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0}
+        {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
+        },
+        {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
+        },
+        {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
+        },
+        {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
+        }
+    },
+    { // Dart Monkey
+        {
+            {120, 185, 255, 1530, 12750},
+            {85, 160, 340, 680, 38250},
+            {75, 170, 530, 1700, 21250}
+        },
+        {
+            {140, 220, 300, 1800, 15000},
+            {100, 190, 400, 8000, 45000},
+            {90, 200, 625, 2000, 25000}
+        },
+        {
+            {150, 235, 325, 1945, 16200},
+            {110, 205, 430, 8640, 48600},
+            {95, 215, 675, 2160, 27000}
+        },
+        {
+            {170, 265, 360, 2160, 18000},
+            {120, 230, 480, 9600, 54000},
+            {110, 240, 750, 2400, 30000}
+        }
     }
 };
 
@@ -97,11 +136,8 @@ Window window = Window{};
 //Mouse mouse = Mouse{};
 //Keyboard keyboard = Keyboard{};
 
-//std::vector<long> offsetsFromCash = { -0x28, -0x10, -0x30, /**/-0x18, -0x248};
-
 int offsetsFromCash1[] = { -0x28, -0x10 };
 int offsetsFromCash2[] = { -0x30, -0x18, -0x248 };
-//std::vector<T>
 template <typename T, size_t size> char* scanLinear(HANDLE handle, char* startingValue, const T(&offsets)[size])
 {
 	char* value = startingValue;
@@ -113,7 +149,7 @@ template <typename T, size_t size> char* scanLinear(HANDLE handle, char* startin
 	return value;
 }
 
-char* getSimulationAddress(HANDLE handle)
+char* getSimulationAddress(HANDLE handle) // Instead of looking for sim, get static pointer to it? It might work
 {
 	char* cashValueAddress = memory.ScanForValue(handle, 650.0);
 	char* entryOffsetAddress = scanLinear(handle, cashValueAddress, offsetsFromCash1);
@@ -155,7 +191,7 @@ int main()
 		clientPosition = RECT{ clientPosition.left + x_offset, clientPosition.top + y_offset, clientPosition.right, clientPosition.bottom }; //Top left corner of window
 		clientSize = RECT{ 0, 0, clientSize.right - x_offset - x_minus_offset, clientSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
 
-		//Gets the play screen spze size
+		//Gets the play screen space size
 		const int x_out = clientSize.right + 200;
 		const int y_out = clientSize.bottom + 101;
 
@@ -169,28 +205,6 @@ int main()
 
 		std::cout << (void*)getSimulationAddress(handle) << "\n";
 
-		//cashValueAddress = memory.ScanForValue(handle, 650.0);// reinterpret_cast<uintptr_t>(address) + offsetsFromCash[2]
-		/*if (cashValueAddress)
-		{
-			std::cout << (void*)cashValueAddress << "\n";
-			char* cashManagerAddress = nullptr;
-			cashManagerAddress = memory.ScanForValue(handle, reinterpret_cast<uintptr_t>(cashValueAddress) + offsetsFromCash[0]);
-			if (cashManagerAddress)
-			{
-				char* entryAddress = nullptr;
-				entryAddress = memory.ScanForValue(handle, reinterpret_cast<uintptr_t>(cashManagerAddress) + offsetsFromCash[1]);
-				if (entryAddress)
-				{
-					std::cout << (void*)entryAddress << "\n";
-					char* dictonaryAddresses = nullptr;
-					dictonaryAddresses = memory.ScanForValue(handle, reinterpret_cast<uintptr_t>(entryAddress) + offsetsFromCash[2]);
-					if (dictonaryAddresses)
-					{
-						std::cout << (void*)dictonaryAddresses << "\n";
-					}
-				}
-			}
-		}*/
 	}
 	return 1;
 }

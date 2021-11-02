@@ -192,6 +192,30 @@ public:
 			}
 		}
 	}
+
+	///https://www.cheatengine.org/forum/viewtopic.php?t=594721&sid=ae3fce06e7e08b8cae23afd8c2141974
+	char* ReadOffsets(HANDLE handle, char* baseAddress, std::vector<int> offsets)
+	{
+		char* finalAddress = 0;
+		char* tempAddress = 0;
+	
+		bool success = ReadProcessMemory(handle, baseAddress + offsets[0], &finalAddress, sizeof(finalAddress), NULL);
+		tempAddress = finalAddress;
+	
+		for (int i = 1; i < offsets.size() - 1; i++)
+		{
+			bool success = ReadProcessMemory(handle, tempAddress + offsets[i], &finalAddress, sizeof(finalAddress), NULL);
+			if (!success)
+			{
+				std::cout << "Invalid Offset: " << offsets[i] << std::endl;
+				//throw std::runtime_error("Invalid Offset!");
+				break;
+			}
+			tempAddress = finalAddress;
+		}
+		finalAddress = tempAddress + offsets[offsets.max_size() - 1];
+		return finalAddress;
+	}
 private:
 	std::vector<Region> regions;
 };
