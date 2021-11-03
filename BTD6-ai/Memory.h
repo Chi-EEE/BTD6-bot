@@ -68,7 +68,7 @@ public:
 	/// </summary>
 	/// <param name="procId"></param>
 	/// <param name="modName"></param>
-	void GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
+	uintptr_t GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
 	{
 		uintptr_t modBaseAddr = 0;
 		HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
@@ -82,17 +82,14 @@ public:
 				{
 					if (!_wcsicmp(modEntry.szModule, modName))
 					{
-						Region newRegion;
-						newRegion.BaseAddress = (char*)modEntry.modBaseAddr;
-						newRegion.Size = modEntry.modBaseSize;
-						regions.push_back(newRegion);
-						CloseHandle(hSnap);
+						modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
 						break;
 					}
 				} while (Module32Next(hSnap, &modEntry));
 			}
 		}
-		//CloseHandle(hSnap);
+		CloseHandle(hSnap);
+		return modBaseAddr;
 	}
 
 	/// <summary>
@@ -201,7 +198,11 @@ public:
 	
 		bool success = ReadProcessMemory(handle, baseAddress + offsets[0], &finalAddress, sizeof(finalAddress), NULL);
 		tempAddress = finalAddress;
-	
+		if (not success)
+		{
+			std::cout << "oh\n";
+		}
+
 		for (int i = 1; i < offsets.size() - 1; i++)
 		{
 			bool success = ReadProcessMemory(handle, tempAddress + offsets[i], &finalAddress, sizeof(finalAddress), NULL);
@@ -213,7 +214,7 @@ public:
 			}
 			tempAddress = finalAddress;
 		}
-		finalAddress = tempAddress + offsets[offsets.max_size() - 1];
+		finalAddress = tempAddress + offsets[offsets.size() - 1];
 		return finalAddress;
 	}
 private:
