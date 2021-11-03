@@ -1,11 +1,10 @@
 #include "Tower.h"
 short Tower::TowerCount = 0;
 
-Tower::Tower(int t_towerIndex, std::string t_towerName, Vector2 t_position)
+Tower::Tower(TowerName t_towerName, Vector2 t_position)
 {
 	TowerCount++;
-	towerIndex = t_towerIndex;
-	name = t_towerName;
+	towerName = t_towerName;
 	position = t_position;
 }
 

@@ -1,34 +1,47 @@
 #pragma once
 #include <windows.h>
-
 #include <string>
 
-static const std::string TOWER_NAME[23] =
-{
-	"Hero",
-	"Dart Monkey",
-	"Boomerang Monkey",
-	"Bomb Shooter",
-	"Tack Shooter",
-	"Ice Monkey",
-	"Glue Gunner",
-	"Sniper Monkey",
-	"Monkey Sub",
-	"Monkey Buccaneer",
-	"Monkey Ace",
-	"Heli Pilot",
-	"Mortar Monkey",
-	"Dartling Gunner",
-	"Wizard Monkey",
-	"Super Monkey",
-	"Ninja Monkey",
-	"Alchemist",
-	"Druid",
-	"Banana Farm",
-	"Spike Factory",
-	"Monkey Village",
-	"Engineer Monkey"
+static double Buy_Chance = 50;
+static double Upgrade_Chance = 10;
+
+
+
+
+
+
+
+
+
+
+// VALUES BELOW ARE NOT RECOMENDED TO BE CHANGED
+enum class TowerName {
+	Hero,
+	Dart_Monkey,
+	Boomerang_Monkey,
+	Bomb_Shooter,
+	Tack_Shooter,
+	Ice_Monkey,
+	Glue_Gunner,
+	Sniper_Monkey,
+	Monkey_Sub,
+	Monkey_Buccaneer,
+	Monkey_Ace,
+	Heli_Pilot,
+	Mortar_Monkey,
+	Dartling_Gunner,
+	Wizard_Monkey,
+	Super_Monkey,
+	Ninja_Monkey,
+	Alchemist,
+	Druid,
+	Banana_Farm,
+	Spike_Factory,
+	Monkey_Village,
+	Engineer_Monkey
 };
+
+//http://www.kbdedit.com/manual/low_level_vk_list.html
 static const WORD TOWER_KEY_CODE[23] =
 {
 	0x55,
@@ -57,6 +70,17 @@ static const WORD TOWER_KEY_CODE[23] =
 };
 
 static UINT TOWER_SCAN_CODE[23];
+
+static const WORD UPGRADE_KEY_CODE[3] = {
+	0xBC,
+	0xBE,
+	0xBF
+};
+
+static UINT UPGRADE_SCAN_CODE[3];
+
+static const WORD SPACE_KEY_CODE = 0x20;
+static UINT SPACE_SCAN_CODE;
 
 // Easy = .85 math floor 5
 // hard = 1.08 math floor 5

@@ -17,9 +17,11 @@
 class Game
 {
 public:
-	bool PlaceTower(Vector2 position, int towerIndex);
+	bool PlaceTower(Vector2 position, TowerName towerName);
 
 	bool UpgradeTower(int towerVectorIndex, short path);
+
+	void StartNextRound();
 
 	void moveMouseToFarms();
 

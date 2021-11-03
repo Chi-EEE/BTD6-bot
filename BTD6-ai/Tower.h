@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
 
+#include "Globals.h"
 #include "Vector2.h"
 
 class Tower
 {
 public:
-	Tower(int t_towerIndex, std::string t_towerName, Vector2 t_position);
+	Tower(TowerName t_towerName, Vector2 t_position);
 
 	void ChangePosition(Vector2 t_position);
 
@@ -14,14 +15,13 @@ public:
 	short* getUpgradePaths() { return upgradePath; }
 	short getLatestUpgradePath(short path) { return upgradePath[path - 1]; }
 
-	short getTowerIndex() { return towerIndex; }
+	TowerName getTowerName() { return towerName; }
 
 	static int getTowerCount() { return TowerCount; }
 private:
 	static short TowerCount;
 
-	int towerIndex;
-	std::string name;
+	TowerName towerName;
 
 	short upgradePath[3] = { 0, 0, 0 };
 

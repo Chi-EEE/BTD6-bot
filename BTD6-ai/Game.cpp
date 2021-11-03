@@ -1,10 +1,10 @@
 #include "Game.h"
 #include "Globals.h"
 
-bool Game::PlaceTower(Vector2 position, int towerIndex)
+bool Game::PlaceTower(Vector2 position, TowerName towerName)
 {
 	int newtowerCount = 0;
-	INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[towerIndex]);
+	INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[towerName]);
 
 	mouse.setPosition(position);
 	mouse.leftMouseDown();
@@ -16,7 +16,7 @@ bool Game::PlaceTower(Vector2 position, int towerIndex)
 	// Reads memory
 	if (Tower::getTowerCount() > newtowerCount)
 	{
-		Tower newTower = Tower{ towerIndex, TOWER_NAME[towerIndex], position };
+		Tower newTower = Tower{ towerName, position };
 		towers.push_back(newTower);
 		return true;
 	}
@@ -27,29 +27,32 @@ bool Game::UpgradeTower(int towerVectorIndex, short path)
 {
 	int money = 0;
 
-	if (money >= TOWER_UPGRADE[towers[towerVectorIndex].getTowerIndex()][path][towers[towerVectorIndex].getLatestUpgradePath(path) + 1])
+	if (money >= TOWER_UPGRADE[towers[towerVectorIndex].getTowerName()][path][towers[towerVectorIndex].getLatestUpgradePath(path) + 1])
 	{
 		// use the , . / buttons to upgrade.
+		
+		INPUT input = keyboard.keyPress(UPGRADE_KEY_CODE[path - 1]);
+		clock.wait(.1f);
+
+		keyboard.keyRelease(input);
 		towers[towerVectorIndex].UpgradePath(path);
 		return true;
 	}
 	return false;
 }
 
-void Game::moveMouseToFarms()
-{ // Rework to move between farms to avoid bananas from being removed
-	int X_Total = 0;
-	int Y_Total = 0;
+void Game::StartNextRound()
+{
+	INPUT input = keyboard.keyPress(SPACE_SCAN_CODE);
+	clock.wait(.1f);
+	keyboard.keyRelease(input);
+}
 
-	if (farmPositions.size() > 0)
+void Game::moveMouseToFarms()
+{ 
+	for (Vector2 position : farmPositions)
 	{
-		for (Vector2 position : farmPositions)
-		{
-			X_Total += position.X;
-			Y_Total += position.Y;
-		}
-		X_Total /= farmPositions.size();
-		Y_Total /= farmPositions.size();
-		mouse.setPosition(X_Total, Y_Total);
+		clock.wait(.1f);
+		mouse.setPosition(position);
 	}
 }

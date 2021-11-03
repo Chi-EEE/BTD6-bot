@@ -4,6 +4,7 @@
 
 #include "Globals.h"
 
+#include "Game.h"
 #include "Memory.h"
 #include "Window.h"
 #include "Random.h"
@@ -16,11 +17,10 @@ const int x_minus_offset = 232;
 
 const int y_offset = 61;
 
-const int ALLOWED_TOWERS[] =
+const TowerName ALLOWED_TOWERS[] =
 {
-	//1,
-	3,
-	16
+	TowerName::Ninja_Monkey,
+	TowerName::Bomb_Shooter
 };
 
 std::vector<int> offsetsFromSimulation = { 0x021363A0, 0x18, 0xB8, 0x10, 0x3C8, 0x18, 0x0 };
@@ -29,11 +29,7 @@ std::vector<int> offsetsToHealth = { 0x260, 0x28 };
 
 Memory memory = Memory{};
 Window window = Window{};
-Random random = Random{};
-
-Mouse mouse = Mouse{};
-Keyboard keyboard = Keyboard{};
-
+Game game = Game{};
 
 // Following functions aren't needed in program regularly
 
@@ -86,6 +82,12 @@ int main()
 		TOWER_SCAN_CODE[i] = MapVirtualKeyA(TOWER_KEY_CODE[i], 4);
 	}
 
+	for (short i = 0; i < 3; i++)
+	{
+		UPGRADE_SCAN_CODE[i] = MapVirtualKeyA(UPGRADE_KEY_CODE[i], 4);
+	}
+
+	SPACE_SCAN_CODE = MapVirtualKeyA(SPACE_KEY_CODE, 4);
 	//std::cout << "Waiting 5 seconds" << std::endl;
 	//clock.wait(5.f);
 	HWND hwnd = window.GetHwnd("BloonsTD6");
@@ -115,6 +117,34 @@ int main()
 		char* simulationAddress = memory.ReadOffsets(handle, (char*)moduleAddress, offsetsFromSimulation);
 		int difficulty = 0;
 		std::cout << (void*)simulationAddress << "\n";
+		// DO IN LOOP
+		bool roundEnded = false;
+		while (true)
+		{
+			roundEnded = false;
+			if (roundEnded)
+			{
+				int chance = Random::getValue(1, 100);
+				if (chance <= Buy_Chance)
+				{
+
+				}
+				else if (chance <= Upgrade_Chance)
+				{
+					int randomTower = {};
+					std::vector<short> paths = { 1, 2, 3 };
+					std::random_shuffle(paths.begin(), paths.end());
+
+					bool upgradedTower = game.UpgradeTower(1, paths[0]);
+					while (!upgradedTower)
+					{
+						paths.
+						bool upgradedTower = game.UpgradeTower(1, Random::getValue(1, 3));
+					}
+				}
+				game.StartNextRound();
+			}
+		}
 		/*char* moneyAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToMoney);
 		char* healthAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToHealth);
 		std::cout << "2";
@@ -132,23 +162,8 @@ int main()
 			ReadProcessMemory(handle, moneyAddress, &money, sizeof(money), NULL);
 			if (money > 500)
 			{
-				std::cout << money << "\n";
-				const int TOWER_INDEX = ALLOWED_TOWERS[random.GetValue(1, 3) - 1];
 				int x_axis = clientPosition.left + random.GetValue(1, clientSize.right);
 				int y_axis = clientPosition.top + random.GetValue(1, clientSize.bottom);
-				std::cout << "Placing " << TOWER_NAME[TOWER_INDEX] << " at " << x_axis << ", " << y_axis << std::endl;
-
-				INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[TOWER_INDEX]);
-
-				mouse.setPosition(x_axis, y_axis);
-				mouse.leftMouseDown();
-
-				clock.wait(.1f);
-				keyboard.keyRelease(input);
-				mouse.leftMouseUp();
-				mouse.setPosition(x_out, y_out);
-
-				clock.wait(0.5f);
 			}
 		}*/
 		// 
