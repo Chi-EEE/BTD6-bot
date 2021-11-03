@@ -10,6 +10,11 @@ void Mouse::setPosition(const int t_x, const int t_y)
 	SetCursorPos(t_x, t_y);
 }
 
+void Mouse::setPosition(Vector2 t_position)
+{
+	SetCursorPos(t_position.X, t_position.Y);
+}
+
 /// <summary>
 /// Holds the left mouse button
 /// </summary>
