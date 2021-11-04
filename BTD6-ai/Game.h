@@ -17,7 +17,7 @@
 class Game
 {
 public:
-	bool PlaceTower(Vector2 position, TowerName towerName);
+	bool PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition);
 
 	bool UpgradeTower(int towerVectorIndex, short path);
 
@@ -25,6 +25,7 @@ public:
 
 	void moveMouseToFarms();
 
+	std::vector<Tower> getTowers() { return towers; }
 private:
 	Keyboard keyboard;
 	Mouse mouse;

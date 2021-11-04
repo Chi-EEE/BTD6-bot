@@ -1,10 +1,10 @@
 #include "Game.h"
 #include "Globals.h"
 
-bool Game::PlaceTower(Vector2 position, TowerName towerName)
+bool Game::PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition)
 {
 	int newtowerCount = 0;
-	INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[towerName]);
+	INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[static_cast<int>(towerName)]);
 
 	mouse.setPosition(position);
 	mouse.leftMouseDown();
@@ -27,7 +27,7 @@ bool Game::UpgradeTower(int towerVectorIndex, short path)
 {
 	int money = 0;
 
-	if (money >= TOWER_UPGRADE[towers[towerVectorIndex].getTowerName()][path][towers[towerVectorIndex].getLatestUpgradePath(path) + 1])
+	if (money >= TOWER_UPGRADE[static_cast<int>(towers[towerVectorIndex].getTowerName())][path][towers[towerVectorIndex].getLatestUpgradePath(path) + 1])
 	{
 		// use the , . / buttons to upgrade.
 		
