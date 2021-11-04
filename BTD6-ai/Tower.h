@@ -11,7 +11,7 @@ public:
 
 	void ChangePosition(Vector2 t_position);
 
-	bool UpgradePath(short path);
+	void UpgradePath(short path);
 	short* getUpgradePaths() { return upgradePath; }
 	short getLatestUpgradePath(short path) { return upgradePath[path - 1]; }
 

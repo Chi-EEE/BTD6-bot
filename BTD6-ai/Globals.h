@@ -2,10 +2,10 @@
 #include <windows.h>
 #include <string>
 
-static double Buy_Chance = 100;
-static double Upgrade_Chance = 0;
+static const double Buy_Chance = 100;
+static const double Upgrade_Chance = 0;
 
-
+static const short Build_Attempts = 1000;
 
 
 
@@ -86,13 +86,21 @@ static UINT SPACE_SCAN_CODE;
 // hard = 1.08 math floor 5
 // impoppable = 1.20 math floor 5
 // static_cast<int>(((TOWER_UPGRADE[1][0][i] * 0.85) + 2.5)/ 5) * 5;
-const float DIFFICULTY[4] =
+const double DIFFICULTY[4] =
 {
-	0.85f,
-	1.f,
-	1.08f,
-	1.20f
+	0.85,
+	1,
+	1.08,
+	1.20
 };
+const int DIFFICULTY_ROUND[4] =
+{
+	40,
+	60,
+	80,
+	100
+};
+
 const int TOWER_UPGRADE[23][3][5] =
 {
 	//Hero

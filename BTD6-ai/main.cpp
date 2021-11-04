@@ -97,19 +97,29 @@ Vector2 getRandomPosition()
 	return Vector2{ x_axis, y_axis };
 }
 
-bool upgradeTower(int money, Tower *currentTower, int path)
+bool upgradeTower(int difficulty, int money, Tower *currentTower, int path)
 {
 	
 	if (path != currentTower->getChosenPath(1) && path != currentTower->getChosenPath(2))
 	{
 		return false;
 	}
-	if (money >= TOWER_UPGRADE[static_cast<int>(currentTower->getTowerName())][path][currentTower->getLatestUpgradePath(path)])
+	int nextUpgradePath = currentTower->getLatestUpgradePath(path) + 1;
+	if (nextUpgradePath > 5)
+	{
+		return false;
+	}
+	if (money >= getDifficultyPrice(difficulty, TOWER_UPGRADE[static_cast<int>(currentTower->getTowerName())][path][nextUpgradePath]))
 	{
 		game.UpgradeTower(*currentTower, path);
 		return true;
 	}
 	return false;
+}
+
+int getDifficultyPrice(int difficulty, double defaultPrice)
+{
+	return static_cast<int>(((defaultPrice * DIFFICULTY[difficulty - 1]) + 2.5) / 5) * 5;
 }
 
 int main()
@@ -134,10 +144,7 @@ int main()
 		DWORD64 processId = Memory::GetProcessId(L"BloonsTD6.exe");
 
 		//Gets the play screen space size
-		const int x_out = clientSize.right + 200;
-		const int y_out = clientSize.bottom + 101;
-
-		Vector2 offPosition = Vector2{ x_out, y_out };
+		Vector2 offPosition = Vector2{ clientSize.right + 200, clientSize.bottom + 101 };
 
 		HANDLE handle = Memory::GetHandle(processId);
 		memory.InitaliseMemoryRegions(handle);
@@ -164,97 +171,68 @@ int main()
 
 		double nowRound = 0;
 		double previousRound = -1;
-
-		bool doingAction = false;
-		bool purchasingTower = false;
-		bool upgradingTower = false;
+		
+		int difficulty = 0; // EDIT THISSSSSSSSSSSS
 
 		std::cout << "waiting...\n";
 		clock.wait(2.0f);
 		std::cout << "reading...\n";
-		while (health > 0)
+		while (health > 0 && nowRound < DIFFICULTY_ROUND[difficulty])
 		{
 			ReadProcessMemory(handle, roundAddress, &nowRound, sizeof(nowRound), NULL);
-			if (nowRound > previousRound)
+			if (nowRound > previousRound) // Runs the following when the round finishes
 			{
 				ReadProcessMemory(handle, moneyAddress, &money, sizeof(money), NULL);
-				int chance = 101;
-				if (!doingAction)
-				{
-					chance = Random::getValue(1, 100);
-				}
+
+				int chance = Random::getValue(1, 100);
 				// Don't need to go into big loop because the round didn't start
-				if (chance <= Buy_Chance || purchasingTower)
+				if (chance <= Buy_Chance)
 				{
-					purchasingTower = true;
-					doingAction = true;
 					std::random_shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end());
+
+					int currentBuildAttempts = 0;
 					short towerIndex = 0;
 					while (towerIndex < ALLOWED_TOWERS.size())
 					{
-						if (money > TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[towerIndex])])
+						if (money > getDifficultyPrice(difficulty, TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[towerIndex])]))
 						{
 							/// <summary>
 							/// Gets a random position and tries to place tower in that position. 
 							/// </summary>
-							while (previousTowerCount < towerCount)
+							while (previousTowerCount < towerCount && !(currentBuildAttempts >= Build_Attempts))
 							{
 								game.PlaceTower(getRandomPosition(), ALLOWED_TOWERS[towerIndex], offPosition);
 								ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
 							}
 							previousTowerCount = towerCount;
+							break;
 						}
 						else
 							towerIndex++;
 					}
-					purchasingTower = false;
-					doingAction = false;
-
-					if (towerCount > previousTowerCount)
-					{
-						purchasingTower = false;
-						doingAction = false;
-					}
 				}
-				else if (chance <= Upgrade_Chance || upgradingTower)
+				else if (chance <= Upgrade_Chance)
 				{
 					std::vector<Tower> towers = game.getTowers();
-					if (!upgradingTower)
-					{
-						std::random_shuffle(paths.begin(), paths.end());
 
-						std::random_shuffle(towers.begin(), towers.end());
-					}
-					upgradingTower = true;
-					doingAction = true;
+					std::random_shuffle(paths.begin(), paths.end());
+					std::random_shuffle(towers.begin(), towers.end());
 
 					int currentTowerIndex = 0;
-					if (upgradeTower(money, &towers[currentTowerIndex], paths[0]))
+					while (currentTowerIndex < towers.size())
 					{
-						upgradingTower = false;
-						doingAction = false;
-					}
-					else if (upgradeTower(money, &towers[currentTowerIndex], paths[1]))
-					{
-						upgradingTower = false;
-						doingAction = false;
-					}
-					else if (upgradeTower(money, &towers[currentTowerIndex], paths[2]))
-					{
-						upgradingTower = false;
-						doingAction = false;
-					}
-					else
-					{
-						currentTowerIndex++;
-						std::random_shuffle(paths.begin(), paths.end());
+						if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[0]))		{ break; }
+						else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[1])) { break; }
+						else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[2])) { break; }
+						else
+						{
+							currentTowerIndex++;
+							std::random_shuffle(paths.begin(), paths.end());
+						}
 					}
 				}
-				if (!doingAction)
-				{
-					game.StartNextRound();
-					previousRound = nowRound;
-				}
+				game.StartNextRound();
+				previousRound = nowRound;
 			}
 			ReadProcessMemory(handle, healthAddress, &health, sizeof(health), NULL);
 		}
