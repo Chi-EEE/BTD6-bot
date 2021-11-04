@@ -19,7 +19,7 @@ public:
 
 	short getChosenPath(short index) { return pathChosen[index]; }
 	
-	static int getTowerCount() { return TowerCount; }
+	static short getTowerCount() { return TowerCount; }
 private:
 	static short TowerCount;
 

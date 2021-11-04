@@ -3,9 +3,9 @@ class Vector2
 {
 public:
 	Vector2();
-	Vector2(int newX, int newY);
+	Vector2(short newX, short newY);
 
-	int X;
-	int Y;
+	short X;
+	short Y;
 };
 

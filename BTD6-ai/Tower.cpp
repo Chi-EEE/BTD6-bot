@@ -15,11 +15,12 @@ void Tower::ChangePosition(Vector2 t_position)
 
 void Tower::UpgradePath(short path)
 {
-	if (!pathChosen[0]) { pathChosen[0] = path; }
-	else if (!pathChosen[1]) { pathChosen[1] = path; }
-
-	if (pathChosen[0] == path || pathChosen[1] == path)
+	bool equalPath = (pathChosen[0] == path || pathChosen[1] == path);
+	if (!equalPath)
 	{
-		upgradePath[path - 1]++;
+		if (!pathChosen[0]) { pathChosen[0] = path; upgradePath[path - 1]++; }
+		else if (!pathChosen[1]) { pathChosen[1] = path; upgradePath[path - 1]++; }
 	}
+	else
+		upgradePath[path - 1]++;
 }

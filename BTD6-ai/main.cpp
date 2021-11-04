@@ -152,7 +152,6 @@ int main()
 		intptr_t moduleAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");		
 
 		char* simulationAddress = memory.ReadOffsets(handle, (char*)moduleAddress, offsetsFromSimulation);
-		int difficulty = 0;
 		std::cout << "Simulation Address: " << (void*)simulationAddress << "\n";
 
 		char* moneyAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToMoney);
@@ -160,7 +159,6 @@ int main()
 		char* roundAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToRound);
 		char* towerCountAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToTowerCount);
 
-		int previousTowerCount = 0;
 		int towerCount = 0;
 
 		double money = 0;
@@ -172,7 +170,7 @@ int main()
 		double nowRound = 0;
 		double previousRound = -1;
 		
-		int difficulty = 0; // EDIT THISSSSSSSSSSSS
+		short difficulty = 0; // EDIT THISSSSSSSSSSSS
 
 		std::cout << "waiting...\n";
 		clock.wait(2.0f);
@@ -199,12 +197,11 @@ int main()
 							/// <summary>
 							/// Gets a random position and tries to place tower in that position. 
 							/// </summary>
-							while (previousTowerCount < towerCount && !(currentBuildAttempts >= Build_Attempts))
+							while (Tower::getTowerCount() < towerCount && !(currentBuildAttempts >= Build_Attempts))
 							{
 								game.PlaceTower(getRandomPosition(), ALLOWED_TOWERS[towerIndex], offPosition);
 								ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
 							}
-							previousTowerCount = towerCount;
 							break;
 						}
 						else
@@ -218,7 +215,7 @@ int main()
 					std::random_shuffle(paths.begin(), paths.end());
 					std::random_shuffle(towers.begin(), towers.end());
 
-					int currentTowerIndex = 0;
+					short currentTowerIndex = 0;
 					while (currentTowerIndex < towers.size())
 					{
 						if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[0]))		{ break; }

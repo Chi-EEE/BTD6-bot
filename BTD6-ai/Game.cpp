@@ -12,7 +12,7 @@ bool Game::PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition
 	clock.wait(.1f);
 	keyboard.keyRelease(input);
 	mouse.leftMouseUp();
-	mouse.setPosition(position);
+	mouse.setPosition(offPosition);
 	// Reads memory
 	if (Tower::getTowerCount() > newtowerCount)
 	{
