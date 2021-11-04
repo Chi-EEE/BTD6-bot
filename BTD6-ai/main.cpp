@@ -98,7 +98,7 @@ Vector2 getRandomPosition()
 }
 
 bool upgradeTower(int difficulty, int money, Tower *currentTower, int path)
-{
+{ // RANDOMLY CHOOSE PATH IN ARRAY
 	
 	if (path != currentTower->getChosenPath(1) && path != currentTower->getChosenPath(2))
 	{
