@@ -202,6 +202,7 @@ int main()
 							{
 								game.PlaceTower(getRandomPosition(), ALLOWED_TOWERS[towerIndex], offPosition);
 								ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
+								currentBuildAttempts++;
 							}
 							break;
 						}
@@ -213,20 +214,24 @@ int main()
 				{
 					std::vector<Tower> towers = game.getTowers();
 
-					std::random_shuffle(paths.begin(), paths.end());
-					std::random_shuffle(towers.begin(), towers.end());
+					std::vector<short> towerIndexes; // This method is for saving the upgrade paths later on
+					for (short i = 0; i < towers.size(); i++)
+					{
+						towerIndexes.push_back(i);
+					}
+					std::random_shuffle(towerIndexes.begin(), towerIndexes.end());
 
 					short currentTowerIndex = 0;
 					while (currentTowerIndex < towers.size())
 					{
-						Tower tower = towers[currentTowerIndex];
+						Tower tower = towers[towerIndexes[currentTowerIndex]];
 						if (tower.hasUpgradedTwoPaths())
 						{
 							std::array<short, 2> chosenPaths = tower.getChosenPaths();
 							std::random_shuffle(chosenPaths.begin(), chosenPaths.end());
 
-							if (upgradeTower(difficulty, money, &towers[currentTowerIndex], chosenPaths[0])) { break; }
-							else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], chosenPaths[1])) { break; }
+							if (upgradeTower(difficulty, money, &tower, chosenPaths[0])) { break; }
+							else if (upgradeTower(difficulty, money, &tower, chosenPaths[1])) { break; }
 							else
 							{
 								currentTowerIndex++;
@@ -235,9 +240,10 @@ int main()
 						}
 						else
 						{
-							if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[0])) { break; }
-							else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[1])) { break; }
-							else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[2])) { break; }
+							std::random_shuffle(paths.begin(), paths.end());
+							if (upgradeTower(difficulty, money, &tower, paths[0])) { break; }
+							else if (upgradeTower(difficulty, money, &tower, paths[1])) { break; }
+							else if (upgradeTower(difficulty, money, &tower, paths[2])) { break; }
 							else
 							{
 								currentTowerIndex++;
