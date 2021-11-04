@@ -90,8 +90,10 @@ RECT clientSize = RECT{ 0, 0, windowSize.right - x_offset - x_minus_offset, wind
 
 Vector2 getRandomPosition()
 {
-	int x_axis = clientPosition.left + Random::getValue(1, static_cast<int>(clientSize.right));
-	int y_axis = clientPosition.top + Random::getValue(1, static_cast<int>(clientSize.bottom));
+	std::cout << "aacvxcv\n";
+	int x_axis = clientPosition.left + Random::getValue(1, (int)(clientSize.right));
+	int y_axis = clientPosition.top + Random::getValue(1, (int)(clientSize.bottom)); // ERROR HERE --------------------------------------------------------------------------------------------
+	std::cout << "zxccxzczx\n";
 	return Vector2{ x_axis, y_axis };
 }
 
@@ -168,7 +170,9 @@ int main()
 				int chance = 100;
 				if (!doingAction)
 				{
+					std::cout << "yes\n";
 					chance = Random::getValue(1, 100);
+					std::cout << "oh\n";
 				}
 				if (chance <= Buy_Chance || purchasingTower)
 				{

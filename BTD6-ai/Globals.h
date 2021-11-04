@@ -2,8 +2,8 @@
 #include <windows.h>
 #include <string>
 
-static double Buy_Chance = 50;
-static double Upgrade_Chance = 10;
+static double Buy_Chance = 100;
+static double Upgrade_Chance = 0;
 
 
 
