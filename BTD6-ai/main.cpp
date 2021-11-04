@@ -91,10 +91,25 @@ RECT clientSize = RECT{ 0, 0, windowSize.right - x_offset - x_minus_offset, wind
 Vector2 getRandomPosition()
 {
 	std::cout << "aacvxcv\n";
-	int x_axis = clientPosition.left + Random::getValue(1, (int)(clientSize.right));
-	int y_axis = clientPosition.top + Random::getValue(1, (int)(clientSize.bottom)); // ERROR HERE --------------------------------------------------------------------------------------------
+	int x_axis = clientPosition.left + Random::getValue((LONG)1, clientSize.right);
+	int y_axis = clientPosition.top + Random::getValue((LONG)1, clientSize.bottom); // ERROR HERE --------------------------------------------------------------------------------------------
 	std::cout << "zxccxzczx\n";
 	return Vector2{ x_axis, y_axis };
+}
+
+bool upgradeTower(int money, Tower *currentTower, int path)
+{
+	
+	if (path != currentTower->getChosenPath(1) && path != currentTower->getChosenPath(2))
+	{
+		return false;
+	}
+	if (money >= TOWER_UPGRADE[static_cast<int>(currentTower->getTowerName())][path][currentTower->getLatestUpgradePath(path)])
+	{
+		game.UpgradeTower(*currentTower, path);
+		return true;
+	}
+	return false;
 }
 
 int main()
@@ -117,7 +132,6 @@ int main()
 	if (hwnd)
 	{
 		DWORD64 processId = Memory::GetProcessId(L"BloonsTD6.exe");
-		//uintptr_t moduleBaseAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");
 
 		//Gets the play screen space size
 		const int x_out = clientSize.right + 200;
@@ -129,19 +143,16 @@ int main()
 		memory.InitaliseMemoryRegions(handle);
 
 		intptr_t moduleAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");		
-		//std::cout << (void*)getSimulationAddress(handle) << "\n";
 
 		char* simulationAddress = memory.ReadOffsets(handle, (char*)moduleAddress, offsetsFromSimulation);
 		int difficulty = 0;
-		std::cout << (void*)simulationAddress << "\n";
-		// DO IN LOOP
-		std::cout << "address start\n";
+		std::cout << "Simulation Address: " << (void*)simulationAddress << "\n";
+
 		char* moneyAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToMoney);
 		char* healthAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToHealth);
 		char* roundAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToRound);
 		char* towerCountAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToTowerCount);
 
-		std::cout << "address\n";
 		int previousTowerCount = 0;
 		int towerCount = 0;
 
@@ -157,43 +168,47 @@ int main()
 		bool doingAction = false;
 		bool purchasingTower = false;
 		bool upgradingTower = false;
-		std::cout << "waiting\n";
+
+		std::cout << "waiting...\n";
 		clock.wait(2.0f);
-		ReadProcessMemory(handle, healthAddress, &health, sizeof(health), NULL);
-		std::cout << "read\n";
+		std::cout << "reading...\n";
 		while (health > 0)
 		{
 			ReadProcessMemory(handle, roundAddress, &nowRound, sizeof(nowRound), NULL);
 			if (nowRound > previousRound)
 			{
 				ReadProcessMemory(handle, moneyAddress, &money, sizeof(money), NULL);
-				int chance = 100;
+				int chance = 101;
 				if (!doingAction)
 				{
-					std::cout << "yes\n";
 					chance = Random::getValue(1, 100);
-					std::cout << "oh\n";
 				}
+				// Don't need to go into big loop because the round didn't start
 				if (chance <= Buy_Chance || purchasingTower)
 				{
 					purchasingTower = true;
 					doingAction = true;
 					std::random_shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end());
-					if (money > TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[0])])
+					short towerIndex = 0;
+					while (towerIndex < ALLOWED_TOWERS.size())
 					{
-						game.PlaceTower(getRandomPosition(), ALLOWED_TOWERS[0], offPosition);
-						ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
+						if (money > TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[towerIndex])])
+						{
+							/// <summary>
+							/// Gets a random position and tries to place tower in that position. 
+							/// </summary>
+							while (previousTowerCount < towerCount)
+							{
+								game.PlaceTower(getRandomPosition(), ALLOWED_TOWERS[towerIndex], offPosition);
+								ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
+							}
+							previousTowerCount = towerCount;
+						}
+						else
+							towerIndex++;
 					}
-					else if (money > TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[1])])
-					{
-						game.PlaceTower(getRandomPosition(), ALLOWED_TOWERS[1], offPosition);
-						ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
-					}
-					else
-					{
-						purchasingTower = false;
-						doingAction = false;
-					}
+					purchasingTower = false;
+					doingAction = false;
 
 					if (towerCount > previousTowerCount)
 					{
@@ -214,15 +229,18 @@ int main()
 					doingAction = true;
 
 					int currentTowerIndex = 0;
-					if (money >= TOWER_UPGRADE[static_cast<int>(towers[currentTowerIndex].getTowerName())][paths[0]][towers[currentTowerIndex].getLatestUpgradePath(paths[0])])
+					if (upgradeTower(money, &towers[currentTowerIndex], paths[0]))
 					{
-						game.UpgradeTower(currentTowerIndex, paths[0]);
 						upgradingTower = false;
 						doingAction = false;
 					}
-					else if (money >= TOWER_UPGRADE[static_cast<int>(towers[currentTowerIndex].getTowerName())][paths[1]][towers[currentTowerIndex].getLatestUpgradePath(paths[2])])
+					else if (upgradeTower(money, &towers[currentTowerIndex], paths[1]))
 					{
-						game.UpgradeTower(currentTowerIndex, paths[1]);
+						upgradingTower = false;
+						doingAction = false;
+					}
+					else if (upgradeTower(money, &towers[currentTowerIndex], paths[2]))
+					{
 						upgradingTower = false;
 						doingAction = false;
 					}
@@ -231,11 +249,6 @@ int main()
 						currentTowerIndex++;
 						std::random_shuffle(paths.begin(), paths.end());
 					}
-				/*	bool upgradedTower = game.UpgradeTower(Random::getValue(0, Tower::getTowerCount() - 1), paths[0]);
-					if (!upgradedTower)
-					{
-						bool upgradedTower = game.UpgradeTower(Random::getValue(0, Tower::getTowerCount() - 1), paths[1]);
-					}*/
 				}
 				if (!doingAction)
 				{

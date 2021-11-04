@@ -23,11 +23,11 @@ bool Game::PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition
 	return false;
 }
 
-bool Game::UpgradeTower(int towerVectorIndex, short path)
+bool Game::UpgradeTower(Tower tower, short path)
 {
 	int money = 0;
 
-	if (money >= TOWER_UPGRADE[static_cast<int>(towers[towerVectorIndex].getTowerName())][path][towers[towerVectorIndex].getLatestUpgradePath(path) + 1])
+	if (money >= TOWER_UPGRADE[static_cast<int>(tower.getTowerName())][path][tower.getLatestUpgradePath(path) + 1])
 	{
 		// use the , . / buttons to upgrade.
 		
@@ -35,7 +35,7 @@ bool Game::UpgradeTower(int towerVectorIndex, short path)
 		clock.wait(.1f);
 
 		keyboard.keyRelease(input);
-		towers[towerVectorIndex].UpgradePath(path);
+		tower.UpgradePath(path);
 		return true;
 	}
 	return false;

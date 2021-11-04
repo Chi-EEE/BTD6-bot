@@ -18,8 +18,7 @@ class Game
 {
 public:
 	bool PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition);
-
-	bool UpgradeTower(int towerVectorIndex, short path);
+	bool UpgradeTower(Tower tower, short path);
 
 	void StartNextRound();
 
