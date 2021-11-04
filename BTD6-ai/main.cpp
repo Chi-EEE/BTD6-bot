@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <float.h>
+#include <array>
 
 #include "Globals.h"
 
@@ -25,13 +26,13 @@ std::vector<TowerName> ALLOWED_TOWERS =
 	TowerName::Ninja_Monkey,
 	TowerName::Bomb_Shooter
 };
-std::vector<short> paths = { 1, 2, 3 };
+std::array<short, 3> paths = { 1, 2, 3 };
 
-std::vector<int> offsetsFromSimulation = { 0x02006DF8, 0x40, 0xB8, 0x10, 0x298, 0x18, 0x0 };
-std::vector<int> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
-std::vector<int> offsetsToRound = { 0x270, 0x98, 0x0E0, 0x28 };
-std::vector<int> offsetsToMoney = { 0x248, 0x18, 0x30, 0x10, 0x28 };
-std::vector<int> offsetsToHealth = { 0x260, 0x28 };
+std::array<int, 7> offsetsFromSimulation = { 0x02006DF8, 0x40, 0xB8, 0x10, 0x298, 0x18, 0x0 };
+std::array<int, 4> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
+std::array<int, 4> offsetsToRound = { 0x270, 0x98, 0x0E0, 0x28 };
+std::array<int, 5> offsetsToMoney = { 0x248, 0x18, 0x30, 0x10, 0x28 };
+std::array<int, 2> offsetsToHealth = { 0x260, 0x28 };
 
 Memory memory = Memory{};
 Window window = Window{};
@@ -218,13 +219,30 @@ int main()
 					short currentTowerIndex = 0;
 					while (currentTowerIndex < towers.size())
 					{
-						if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[0]))		{ break; }
-						else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[1])) { break; }
-						else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[2])) { break; }
+						Tower tower = towers[currentTowerIndex];
+						if (tower.hasUpgradedTwoPaths())
+						{
+							std::array<short, 2> chosenPaths = tower.getChosenPaths();
+							std::random_shuffle(chosenPaths.begin(), chosenPaths.end());
+
+							if (upgradeTower(difficulty, money, &towers[currentTowerIndex], chosenPaths[0])) { break; }
+							else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], chosenPaths[1])) { break; }
+							else
+							{
+								currentTowerIndex++;
+								std::random_shuffle(paths.begin(), paths.end());
+							}
+						}
 						else
 						{
-							currentTowerIndex++;
-							std::random_shuffle(paths.begin(), paths.end());
+							if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[0])) { break; }
+							else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[1])) { break; }
+							else if (upgradeTower(difficulty, money, &towers[currentTowerIndex], paths[2])) { break; }
+							else
+							{
+								currentTowerIndex++;
+								std::random_shuffle(paths.begin(), paths.end());
+							}
 						}
 					}
 				}

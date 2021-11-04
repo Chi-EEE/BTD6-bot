@@ -19,7 +19,7 @@ void Tower::UpgradePath(short path)
 	if (!equalPath)
 	{
 		if (!pathChosen[0]) { pathChosen[0] = path; upgradePath[path - 1]++; }
-		else if (!pathChosen[1]) { pathChosen[1] = path; upgradePath[path - 1]++; }
+		else if (!pathChosen[1]) { pathChosen[1] = path; upgradePath[path - 1]++; upgradedTwoPaths = true; }
 	}
 	else
 		upgradePath[path - 1]++;
