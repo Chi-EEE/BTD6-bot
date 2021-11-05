@@ -1,26 +1,17 @@
 #include "Game.h"
 #include "Globals.h"
 
-bool Game::PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition)
+void Game::PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition)
 {
-	int newtowerCount = 0;
 	INPUT input = keyboard.keyPress(TOWER_SCAN_CODE[static_cast<int>(towerName)]);
 
 	mouse.setPosition(position);
 	mouse.leftMouseDown();
 
-	clock.wait(.1f);
+	clock.wait(.3f);
 	keyboard.keyRelease(input);
 	mouse.leftMouseUp();
 	mouse.setPosition(offPosition);
-	// Reads memory
-	if (Tower::getTowerCount() > newtowerCount)
-	{
-		Tower newTower = Tower{ towerName, position };
-		towers.push_back(newTower);
-		return true;
-	}
-	return false;
 }
 
 bool Game::UpgradeTower(Tower tower, short path)
@@ -55,4 +46,9 @@ void Game::moveMouseToFarms()
 		clock.wait(.1f);
 		mouse.setPosition(position);
 	}
+}
+
+void Game::AddTower(Tower tower)
+{
+	towers.push_back(tower);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include <vector>
 #include <string>
 
 static const double Buy_Chance = 100;
@@ -13,6 +14,12 @@ static const short Build_Attempts = 1000;
 
 
 
+
+static const std::vector<int> offsetsFromSimulation = { 0x020E7018, 0x80, 0x9D8, 0xB8, 0x0, 0xB0, 0x10, 0 };
+static const std::vector<int> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
+static const std::vector<int> offsetsToRound = { 0x270, 0x98, 0x0E0, 0x28 };
+static const std::vector<int> offsetsToMoney = { 0x248, 0x18, 0x30, 0x10, 0x28 };
+static const std::vector<int> offsetsToHealth = { 0x260, 0x28 };
 
 // VALUES BELOW ARE NOT RECOMENDED TO BE CHANGED
 enum class TowerName {

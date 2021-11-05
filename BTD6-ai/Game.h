@@ -17,12 +17,14 @@
 class Game
 {
 public:
-	bool PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition);
+	void PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition);
 	bool UpgradeTower(Tower tower, short path);
 
 	void StartNextRound();
 
 	void moveMouseToFarms();
+
+	void AddTower(Tower tower);
 
 	std::vector<Tower> getTowers() { return towers; }
 private:
