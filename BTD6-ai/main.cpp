@@ -3,6 +3,7 @@
 #include <string>
 #include <float.h>
 #include <array>
+#include <string.h>
 
 #include "Globals.h"
 
@@ -42,7 +43,6 @@ template <typename T, size_t size> char* scanLinear(HANDLE handle, char* startin
 	char* value = startingValue;
 	for (size_t i = 0; i < size; i++)
 	{
-		std::cout << reinterpret_cast<intptr_t>(value) + offsets[i] << "\n";
 		value = memory.ScanForValue(handle, reinterpret_cast<intptr_t>(value) + offsets[i]);
 	}
 	return value;
@@ -55,9 +55,13 @@ template <typename T, size_t size> char* scanLinear(HANDLE handle, char* startin
 /// <returns></returns>
 char* getSimulationAddress(HANDLE handle) // Instead of looking for sim, get static pointer to it? It might work
 {
-	char* cashValueAddress = memory.ScanForValue(handle, 796.0); // There might be another address with the same value (MONEY ADDRESS IS RNADOM)
-	// All other addresses are similar to eachother
-	//std::cout << "Cash Address: " << (void*)cashValueAddress << "\n";
+	unsigned long long cashValueINTString;
+
+	std::cout << "Enter Money Address: ";
+	std::cin >> cashValueINTString;
+
+	char* cashValueAddress = (char*)(cashValueINTString);
+
 	char* entryOffsetAddress = scanLinear(handle, cashValueAddress, offsetsFromCash1);
 
 	std::vector<char*> dictonaryAddresses = {};
@@ -150,7 +154,8 @@ int main()
 
 		HANDLE handle = Memory::GetHandle(processId);
 		memory.InitaliseMemoryRegions(handle);
-
+		std::cout << (void*)getSimulationAddress(handle) << "\n";
+		/*
 		intptr_t moduleAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");		
 
 		char* simulationAddress = memory.ReadOffsets(handle, (char*)moduleAddress, offsetsFromSimulation);
@@ -293,6 +298,7 @@ int main()
 			ReadProcessMemory(handle, healthAddress, &health, sizeof(health), NULL);
 		}
 		std::cout << "done\n";
+		// */
 	}
 	return 1;
 }
