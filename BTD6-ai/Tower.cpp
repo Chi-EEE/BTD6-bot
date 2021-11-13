@@ -22,9 +22,9 @@ bool Tower::IsValidPath(short path)
 		{
 			return true;
 		}
+		return false;
 	}
-	else
-		return true;
+	return true;
 }
 
 bool Tower::UpgradeTower(double money, short path)

@@ -49,7 +49,7 @@ public:
 	/// </summary>
 	/// <param name="procId">process id</param>
 	/// <returns>handle</returns>
-	static HANDLE GetHandle(DWORD procId)
+	static HANDLE GetHandle(DWORD64 procId)
 	{
 		HANDLE handle = OpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, procId);
 		if (!handle)
@@ -68,7 +68,7 @@ public:
 	/// </summary>
 	/// <param name="procId"></param>
 	/// <param name="modName"></param>
-	uintptr_t GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
+	uintptr_t GetModuleBaseAddress(DWORD64 procId, const wchar_t* modName)
 	{
 		uintptr_t modBaseAddr = 0;
 		HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);

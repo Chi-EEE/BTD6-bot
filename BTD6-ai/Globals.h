@@ -14,7 +14,7 @@ static const int DIFFICULTY = 1;
 static const double Buy_Chance = 100;
 static const double Upgrade_Chance = 0;
 
-static const short Build_Attempts = 1000;
+static const short MaximumBuildAttempts = 200;
 
 
 
@@ -58,6 +58,12 @@ enum class TowerName {
 	Spike_Factory,
 	Monkey_Village,
 	Engineer_Monkey
+};
+
+static std::vector<TowerName> ALLOWED_TOWERS =
+{
+	TowerName::Ninja_Monkey,
+	TowerName::Bomb_Shooter
 };
 
 //http://www.kbdedit.com/manual/low_level_vk_list.html

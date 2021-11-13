@@ -8,25 +8,8 @@
 #include "Globals.h"
 
 #include "Game.h"
-#include "Tower.h"
+#include "Bot.h"
 
-#include "Memory.h"
-#include "Window.h"
-#include "Random.h"
-#include "Mouse.h"
-#include "Clock.h"
-#include "Keyboard.h"
-
-
-std::vector<TowerName> ALLOWED_TOWERS =
-{
-	TowerName::Ninja_Monkey,
-	TowerName::Bomb_Shooter
-};
-std::array<short, 3> paths = { 1, 2, 3 };
-
-Memory memory = Memory{};
-Window window = Window{};
 Game game = Game{};
 
 // Following functions aren't needed in program regularly
@@ -77,44 +60,6 @@ char* getSimulationAddress(HANDLE handle) // Instead of looking for sim, get sta
 }
 // */
 
-RECT windowPosition;
-RECT windowSize;
-
-RECT clientPosition;
-RECT clientSize;
-
-//int getDifficultyPrice(int difficulty, double defaultPrice)
-//{
-//	return static_cast<int>(((defaultPrice * DIFFICULTY[difficulty]) + 2.5) / 5) * 5;
-//}
-
-//Vector2 getRandomPosition()
-//{
-//	int x_axis = clientPosition.left + Random::getValue((int)1, (int)(clientSize.right));
-//	int y_axis = clientPosition.top + Random::getValue((int)1, (int)(clientSize.bottom));
-//	return Vector2{ x_axis, y_axis };
-//}
-
-//bool upgradeTower(int difficulty, int money, Tower *currentTower, int path)
-//{ // RANDOMLY CHOOSE PATH IN ARRAY
-//	
-//	if (path != currentTower->getChosenPath(1) && path != currentTower->getChosenPath(2))
-//	{
-//		return false;
-//	}
-//	int nextUpgradePath = currentTower->getLatestUpgradePath(path) + 1;
-//	if (nextUpgradePath > 5)
-//	{
-//		return false;
-//	}
-//	if (money >= getDifficultyPrice(difficulty, TOWER_UPGRADE[static_cast<int>(currentTower->getTowerName())][path][nextUpgradePath]))
-//	{
-//		game.UpgradeTower(*currentTower, path);
-//		return true;
-//	}
-//	return false;
-//}
-
 int main()
 {
 	for (short i = 0; i < 23; i++)
@@ -130,24 +75,7 @@ int main()
 	SPACE_SCAN_CODE = MapVirtualKeyA(SPACE_KEY_CODE, 4);
 	//std::cout << "Waiting 5 seconds" << std::endl;
 	//Clock::wait(5.f);
-	//HWND hwnd = window.GetHwnd("BloonsTD6");
-	//if (hwnd)
-	//{
-	//	//windowPosition = window.GetRect(); // Window Position
-	//	//windowSize = window.GetSizeRect(); // Playable Window Size
-
-	//	//clientPosition = RECT{ windowPosition.left + x_offset, windowPosition.top + y_offset, windowPosition.right, windowPosition.bottom }; //Top left corner of playable window without hitting ui
-	//	//clientSize = RECT{ 0, 0, windowSize.right - x_offset - x_minus_offset, windowSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
-
-	//	DWORD64 prcocessId = Memory::GetProcessId(L"BloonsTD6.exe");
-
-	//	//Gets the play screen space size
-	//	//Vector2 offPosition = Vector2{ clientSize.right + 200, clientSize.bottom + 101 };
-
-	//	//HANDLE handle = Memory::GetHandle(processId);
-	//	//memory.InitaliseMemoryRegions(handle);
-	//	//std::cout << (void*)getSimulationAddress(handle) << "\n";
-	//	
-	//}
+	Bot bot = Bot{ &game };
+	bot.run(&game);
 	return 1;
 }

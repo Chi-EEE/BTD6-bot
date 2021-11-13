@@ -1,26 +1,17 @@
 #pragma once
+#include "Game.h"
 #include "Memory.h"
+#include "Vector2.h"
 
 class Bot
 {
 public:
-	Bot();
-
+    Bot(Game* game);
+    void run(Game* game);
 private:
-	HANDLE handle;
-	DWORD64 processId;
+	Vector2 GetRandomPosition();
 
-	void GetMemoryAddresses();
-
-	void run();
-
-	Memory memory = Memory{};
-	// Memory Addresses
-	char* simulationAddress;
-
-	char* moneyAddress;
-	char* healthAddress;
-	char* roundAddress;
-	char* towerCountAddress;
+	Vector2 ClientPosition;
+	Vector2 ClientSize;
 };
 

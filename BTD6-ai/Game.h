@@ -17,11 +17,12 @@
 class Game
 {
 public:
+	Game();
 
-	void GetMoney(double* variable);
-	void GetHealth(double* variable);
-	void GetRoundCount(int* variable);
-	void GetTowerCount(int* variable);
+	double GetMoney();
+	double GetHealth();
+	int GetRoundCount();
+	int GetTowerCount();
 
 	int MultiplyDefaultPrice(double defaultPrice);
 
@@ -30,6 +31,8 @@ public:
 
 	bool PlaceTower(TowerName TowerName, Vector2 Position);
 
+	bool CanBuildTower(TowerName TowerName);
+
 	void StartNextRound();
 
 	//void moveMouseToFarms();
@@ -37,6 +40,9 @@ public:
 	void AddTower(Tower tower);
 
 	std::vector<Tower> getTowers() { return towers; }
+
+	Vector2 GetClientPosition() { return clientPosition; }
+	Vector2 GetClientSize() { return clientSize; }
 private:
 
 	HANDLE handle;
@@ -63,6 +69,8 @@ private:
 	std::vector<short> randomTowerIndexes = {};
 	std::vector<Vector2> farmPositions = {};
 
+	Vector2 clientPosition;
+	Vector2 clientSize;
 	Vector2 DeselectPosition;
 };
 

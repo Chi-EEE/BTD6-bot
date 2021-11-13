@@ -16,8 +16,6 @@ public:
 
 	bool UpgradeTower(double money, short path);
 
-	void UpgradePath(short path);
-
 	TowerName getTowerName() { return Name; }
 
 private:

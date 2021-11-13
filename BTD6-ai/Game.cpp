@@ -20,10 +20,10 @@ void Game::GetPositions()
 	RECT windowPosition = Window::GetRect(hwnd); // Window Position
 	RECT windowSize = Window::GetSizeRect(hwnd); // Playable Window Size
 
-	RECT clientPosition = RECT{ windowPosition.left + x_offset, windowPosition.top + y_offset, windowPosition.right, windowPosition.bottom }; //Top left corner of playable window without hitting ui
-	RECT clientSize = RECT{ 0, 0, windowSize.right - x_offset - x_minus_offset, windowSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
+	clientPosition = Vector2{ windowPosition.left + x_offset, windowPosition.top + y_offset }; //Top left corner of playable window without hitting ui
+	clientSize = Vector2{ windowSize.right - x_offset - x_minus_offset, windowSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
 
-	DeselectPosition = Vector2{ clientSize.right + 200, clientSize.bottom + 101 };
+	DeselectPosition = Vector2{ clientSize.X + 200, clientSize.Y + 101 };
 	CloseHandle(hwnd);
 }
 
@@ -41,28 +41,28 @@ void Game::GetMemoryAddresses()
 	towerCountAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToTowerCount);
 }
 
-void Game::GetMoney(double* variable)
+double Game::GetMoney()
 {
-	ReadProcessMemory(handle, moneyAddress, &variable, sizeof(variable), NULL);
-	money = *variable;
+	ReadProcessMemory(handle, moneyAddress, &money, sizeof(money), NULL);
+	return money;
 }
 
-void Game::GetHealth(double* variable)
+double Game::GetHealth()
 {
-	ReadProcessMemory(handle, healthAddress, &variable, sizeof(variable), NULL);
-	health = *variable;
+	ReadProcessMemory(handle, healthAddress, &health, sizeof(health), NULL);
+	return health;
 }
 
-void Game::GetRoundCount(int* variable)
+int Game::GetRoundCount()
 {
-	ReadProcessMemory(handle, roundAddress, &variable, sizeof(variable), NULL);
-	roundCount = *variable;
+	ReadProcessMemory(handle, roundAddress, &roundCount, sizeof(roundCount), NULL);
+	return roundCount;
 }
 
-void Game::GetTowerCount(int* variable)
+int Game::GetTowerCount()
 {
-	ReadProcessMemory(handle, towerCountAddress, &variable, sizeof(variable), NULL);
-	towerCount = *variable;
+	ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
+	return towerCount;
 }
 
 int Game::MultiplyDefaultPrice(double defaultPrice)
@@ -109,8 +109,7 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 		int checkAttempts = 0;
 		while (checkAttempts <= 20)
 		{
-			GetTowerCount(&towerCount);
-			if (previousTowerCount < towerCount)
+			if (previousTowerCount < GetTowerCount())
 			{
 				Tower newTower = Tower{ TowerName, Position };
 				towers.push_back(newTower);
@@ -121,6 +120,12 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 		}
 	}
 	return false;
+}
+
+bool Game::CanBuildTower(TowerName TowerName)
+{
+	int towerId = static_cast<int>(TowerName);
+	return TOWER_BASE_COST[towerId] <= money;
 }
 
 void Game::StartNextRound()
