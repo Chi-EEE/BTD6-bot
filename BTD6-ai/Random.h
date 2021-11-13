@@ -10,7 +10,6 @@ public:
 		return dist(GetEngine());
 	}
 
-private:
 	static std::mt19937& GetEngine() {
 		static std::random_device seed_gen;
 		static std::mt19937 engine(seed_gen());

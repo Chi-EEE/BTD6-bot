@@ -5,13 +5,10 @@
 class Window
 {
 public:
-	HWND GetHwnd(const char* windowName);
-	RECT GetRect();
-	RECT GetSizeRect();
+	static HWND GetHwnd(const char* windowName);
+    static RECT GetRect(HWND hwnd);
+	static RECT GetSizeRect(HWND hwnd);
 
 private:
-	HWND hwnd;
-	RECT windowRect;
-	RECT windowSize;
 };
 

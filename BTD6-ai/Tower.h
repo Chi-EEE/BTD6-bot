@@ -12,26 +12,20 @@ public:
 
 	void ChangePosition(Vector2 t_position);
 
+	bool IsValidPath(short path);
+
+	bool UpgradeTower(double money, short path);
+
 	void UpgradePath(short path);
-	short getLatestUpgradePath(short path) { return upgradePath[path - 1]; }
 
-	TowerName getTowerName() { return towerName; }
+	TowerName getTowerName() { return Name; }
 
-	short getChosenPath(short index) { return pathChosen[index]; }
-	std::array<short, 2> getChosenPaths() { return pathChosen; }
-	bool hasUpgradedTwoPaths() { return upgradedTwoPaths; }
-
-	static short getTowerCount() { return TowerCount; }
 private:
-	static short TowerCount;
+	TowerName Name;
+	int Id;
 
-	TowerName towerName;
+	Vector2 Position;
 
-	short upgradePath[3] = { 0, 0, 0 };
-
-	std::array<short, 2> pathChosen = { 0, 0 };
-	bool upgradedTwoPaths = false;
-
-	Vector2 position;
+	std::array<short, 3> UpgradePath = { 0, 0, 0 };
 };
 

@@ -5,7 +5,7 @@
 
 HWND Window::GetHwnd(const char* windowName)
 {
-	hwnd = FindWindowA(NULL, windowName);
+	HWND hwnd = FindWindowA(NULL, windowName);
 	if (!hwnd)
 	{
 		std::cout << "Process Window not found: " << windowName << std::endl;
@@ -14,14 +14,16 @@ HWND Window::GetHwnd(const char* windowName)
 }
 
 //https://stackoverflow.com/questions/49543452/how-to-get-the-client-window-position-using-the-winapi
-RECT Window::GetRect()
+RECT Window::GetRect(HWND hwnd)
 {
+	RECT windowRect = RECT{};
 	MapWindowPoints(hwnd, NULL, (LPPOINT)&windowRect, 2);
 	return windowRect;
 }
 
-RECT Window::GetSizeRect()
+RECT Window::GetSizeRect(HWND hwnd)
 {
+	RECT windowSize = RECT{};
 	GetClientRect(hwnd, &windowSize); // Right, Bottom 
 	return windowSize;
 }

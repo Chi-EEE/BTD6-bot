@@ -17,22 +17,52 @@
 class Game
 {
 public:
-	void PlaceTower(Vector2 position, TowerName towerName, Vector2 offPosition);
-	bool UpgradeTower(Tower tower, short path);
+
+	void GetMoney(double* variable);
+	void GetHealth(double* variable);
+	void GetRoundCount(int* variable);
+	void GetTowerCount(int* variable);
+
+	int MultiplyDefaultPrice(double defaultPrice);
+
+	Tower GetRandomTower();
+	Tower GetNextRandomTower(short indexCount);
+
+	bool PlaceTower(TowerName TowerName, Vector2 Position);
 
 	void StartNextRound();
 
-	void moveMouseToFarms();
+	//void moveMouseToFarms();
 
 	void AddTower(Tower tower);
 
 	std::vector<Tower> getTowers() { return towers; }
 private:
-	Keyboard keyboard;
-	Mouse mouse;
-	Clock clock;
+
+	HANDLE handle;
+	DWORD64 processId;
+	Memory memory = Memory{};
+
+	void GetPositions();
+
+	void GetMemoryAddresses();
+
+	// Memory Addresses
+	char* simulationAddress;
+	char* moneyAddress;
+	char* healthAddress;
+	char* roundAddress;
+	char* towerCountAddress;
+
+	double money;
+	double health;
+	int roundCount;
+	int towerCount;
 
 	std::vector<Tower> towers = {};
+	std::vector<short> randomTowerIndexes = {};
 	std::vector<Vector2> farmPositions = {};
+
+	Vector2 DeselectPosition;
 };
 

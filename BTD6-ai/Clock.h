@@ -3,6 +3,6 @@
 class Clock
 {
 public:
-	void wait(float t_time);
+	static void wait(float t_time);
 private:
 };

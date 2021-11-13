@@ -1,26 +1,44 @@
 #include "Tower.h"
-short Tower::TowerCount = 0;
 
-Tower::Tower(TowerName t_towerName, Vector2 t_position)
-{
-	TowerCount++;
-	towerName = t_towerName;
-	position = t_position;
+#include "Clock.h"
+#include "Keyboard.h"
+Tower::Tower(TowerName t_TowerName, Vector2 t_Position)
+{ 
+	Name = t_TowerName;
+	Id = static_cast<int>(t_TowerName);
+	Position = t_Position;
 }
 
 void Tower::ChangePosition(Vector2 t_position)
 {
-	position = t_position;
+	Position = t_position;
 }
 
-void Tower::UpgradePath(short path)
+bool Tower::IsValidPath(short path)
 {
-	bool equalPath = (pathChosen[0] == path || pathChosen[1] == path);
-	if (!equalPath && !upgradedTwoPaths)
+	if (UpgradePath.size() == 2)
 	{
-		if (!pathChosen[0]) { pathChosen[0] = path; upgradePath[path - 1]++; }
-		else if (!pathChosen[1]) { pathChosen[1] = path; upgradePath[path - 1]++; upgradedTwoPaths = true; }
+		if (UpgradePath[path] && UpgradePath[path] < 5)
+		{
+			return true;
+		}
 	}
 	else
-		upgradePath[path - 1]++;
+		return true;
+}
+
+bool Tower::UpgradeTower(double money, short path)
+{
+	if (IsValidPath(path) && money >= TOWER_UPGRADE[Id][path][UpgradePath[path] + 1])
+	{
+		// use the , . / buttons to upgrade.
+		
+		INPUT input = Keyboard::keyPress(UPGRADE_KEY_CODE[path - 1]);
+		Clock::wait(.1f);
+
+		Keyboard::keyRelease(input);
+		UpgradePath[path]++;
+		return true;
+	}
+	return false;
 }
