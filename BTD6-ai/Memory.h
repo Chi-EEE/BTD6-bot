@@ -198,7 +198,7 @@ public:
 	
 		bool success = ReadProcessMemory(handle, baseAddress + offsets[0], &finalAddress, sizeof(finalAddress), NULL);
 		tempAddress = finalAddress;
-		if (not success)
+		if (!success)
 		{
 			std::cout << "oh\n";
 		}

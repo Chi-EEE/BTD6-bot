@@ -8,10 +8,11 @@
 #include "Globals.h"
 
 #include "Game.h"
+#include "Memory.h"
 #include "Bot.h"
 
 Game game = Game{};
-
+//Memory memory = Memory{};
 // Following functions aren't needed in program regularly
 /*
 //reinterpret_cast<std::uintptr_t> method to convert char* to number / void* to string
@@ -34,6 +35,11 @@ template <typename T, size_t size> char* scanLinear(HANDLE handle, char* startin
 /// <returns></returns>
 char* getSimulationAddress(HANDLE handle) // Instead of looking for sim, get static pointer to it? It might work
 {
+	DWORD processId = Memory::GetProcessId(L"BloonsTD6.exe");
+	HANDLE handle = Memory::GetHandle(processId);
+
+	memory.InitaliseMemoryRegions(handle);
+
 	unsigned long long cashValueINTString;
 
 	std::cout << "Enter Money Address: ";
@@ -56,25 +62,17 @@ char* getSimulationAddress(HANDLE handle) // Instead of looking for sim, get sta
 			break;
 		}
 	}
+	std::cout << (reinterpret_cast<intptr_t>(validDictonaryAddress + offsetsFromCash2[2]);
 	return (char*)(reinterpret_cast<intptr_t>(validDictonaryAddress + offsetsFromCash2[2]));
 }
 // */
 
 int main()
 {
-	for (short i = 0; i < 23; i++)
-	{
-		TOWER_SCAN_CODE[i] = MapVirtualKeyA(TOWER_KEY_CODE[i], 4);
-	}
+	//Keyboard::Initalise();
 
-	for (short i = 0; i < 3; i++)
-	{
-		UPGRADE_SCAN_CODE[i] = MapVirtualKeyA(UPGRADE_KEY_CODE[i], 4);
-	}
-
-	SPACE_SCAN_CODE = MapVirtualKeyA(SPACE_KEY_CODE, 4);
-	//std::cout << "Waiting 5 seconds" << std::endl;
-	//Clock::wait(5.f);
+	std::cout << "Waiting 5 seconds" << std::endl;
+	Clock::wait(5.f);
 	Bot bot = Bot{ &game };
 	bot.run(&game);
 	return 1;

@@ -18,14 +18,16 @@ Bot::Bot(Game* game)
 
 void Bot::run(Game* game)
 {
-	int previousRound = 0;
-	int currentRound = game->GetRoundCount();
+	double previousRound = -1;
+	double currentRound = game->GetRoundCount();
 	while (game->GetHealth() > 0 && currentRound < DIFFICULTY_ROUND[DIFFICULTY])
 	{
 		if (currentRound > previousRound)
 		{
+			game->GetMoney();
+			std::cout << "Next Round: " << currentRound << "\n";
 			previousRound = currentRound;
-			int chance = Random::getValue(1, 100);
+			int chance = Random::getValue(1, 100); // Weakness: Can only do one action at a time each round
 			if (chance <= Buy_Chance)
 			{
 				std::random_shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end());
@@ -43,10 +45,31 @@ void Bot::run(Game* game)
 							built = game->PlaceTower(ALLOWED_TOWERS[currentTower], GetRandomPosition());
 							buildAttempts++;
 						}
+						if (built)
+						{
+							break;
+						}
 					}
 					currentTower++;
 				}
 			}
+			else if (chance <= Upgrade_Chance)
+			{
+				Tower *randomTower = game->GetRandomTower();
+				std::random_shuffle(PATHS.begin(), PATHS.end()); // Still in order?
+				short currentPath = 0;
+				while (currentPath < 3)
+				{
+					std::cout << "Upgrade Path for: " << PATHS[currentPath] << "\n";
+					if (game->UpgradeTower(randomTower, PATHS[currentPath]))
+					{
+						break;
+					}
+					currentPath++;
+				}
+			}
+			std::cout << "-Start Next Round-\n";
+			game->StartNextRound();
 		}
 		currentRound = game->GetRoundCount();
 	}

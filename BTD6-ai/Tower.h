@@ -2,6 +2,8 @@
 #include <string>
 #include <array>
 
+#include <iostream>
+
 #include "Globals.h"
 #include "Vector2.h"
 
@@ -14,16 +16,20 @@ public:
 
 	bool IsValidPath(short path);
 
-	bool UpgradeTower(double money, short path);
+	Vector2 GetPosition() { return Position; }
+	int GetId() { return Id; }
+
+	std::array<short, 3> GetUpgradePath() { return UpgradePath; }
+	void IncreasePath(short path) { UpgradePath[path]++; }
 
 	TowerName getTowerName() { return Name; }
 
 private:
 	TowerName Name;
 	int Id;
+	std::array<short, 3> UpgradePath = { };
 
 	Vector2 Position;
 
-	std::array<short, 3> UpgradePath = { 0, 0, 0 };
 };
 

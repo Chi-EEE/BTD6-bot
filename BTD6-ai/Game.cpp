@@ -23,8 +23,8 @@ void Game::GetPositions()
 	clientPosition = Vector2{ windowPosition.left + x_offset, windowPosition.top + y_offset }; //Top left corner of playable window without hitting ui
 	clientSize = Vector2{ windowSize.right - x_offset - x_minus_offset, windowSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
 
-	DeselectPosition = Vector2{ clientSize.X + 200, clientSize.Y + 101 };
-	CloseHandle(hwnd);
+	DebuildPosition = Vector2{ clientSize.X + 200, clientSize.Y + 101 };
+	DeupgradePosition = Vector2{ clientSize.X + 175, clientSize.Y + 101 };
 }
 
 void Game::GetMemoryAddresses()
@@ -34,10 +34,13 @@ void Game::GetMemoryAddresses()
 	intptr_t moduleAddress = memory.GetModuleBaseAddress(processId, L"GameAssembly.dll");
 
 	simulationAddress = memory.ReadOffsets(handle, (char*)moduleAddress, offsetsFromSimulation);
-
+	std::cout << (void*)simulationAddress << "\n";
 	moneyAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToMoney);
+
 	healthAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToHealth);
+
 	roundAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToRound);
+
 	towerCountAddress = memory.ReadOffsets(handle, simulationAddress, offsetsToTowerCount);
 }
 
@@ -53,7 +56,7 @@ double Game::GetHealth()
 	return health;
 }
 
-int Game::GetRoundCount()
+double Game::GetRoundCount()
 {
 	ReadProcessMemory(handle, roundAddress, &roundCount, sizeof(roundCount), NULL);
 	return roundCount;
@@ -67,21 +70,21 @@ int Game::GetTowerCount()
 
 int Game::MultiplyDefaultPrice(double defaultPrice)
 {
-	return static_cast<int>(((defaultPrice * DIFFICULTY_MULTIPLIER[DIFFICULTY]) + 2.5) / 5) * 5;
+	return static_cast<int>(((defaultPrice * DIFFICULTY_MULTIPLIER[DIFFICULTY])) / 5) * 5;
 }
 
-Tower Game::GetRandomTower()
+Tower* Game::GetRandomTower()
 {
-	if (randomTowerIndexes.size() != towers.size())
-	{
+	//if (randomTowerIndexes.size() != towers.size())
+	//{
 		randomTowerIndexes.clear();
 		for (short i = 0; i < towers.size(); i++)
 		{
 			randomTowerIndexes.push_back(i);
 		}
-	}
+	//}
 	std::shuffle(randomTowerIndexes.begin(), randomTowerIndexes.end(), Random::GetEngine());
-	return towers[randomTowerIndexes[0]];
+	return &towers[randomTowerIndexes[0]];
 }
 
 Tower Game::GetNextRandomTower(short indexCount)
@@ -95,19 +98,19 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 	if (TOWER_BASE_COST[towerId] <= money)
 	{
 		const int previousTowerCount = towerCount;
-		INPUT input = Keyboard::keyPress(TOWER_SCAN_CODE[towerId]);
-
+		INPUT input = Keyboard::keyPress(MapVirtualKeyA(TOWER_KEY_CODE[towerId],4)); // Getting the SCAN Code in real time
+		
 		Mouse::setPosition(Position);
 		Mouse::leftMouseDown();
 
 		Clock::wait(.3f);
 		Keyboard::keyRelease(input);
 		Mouse::leftMouseUp();
-		Mouse::setPosition(DeselectPosition);
+		Mouse::setPosition(DebuildPosition);
 
 		// Loop to check if the tower count has increased
 		int checkAttempts = 0;
-		while (checkAttempts <= 20)
+		while (checkAttempts <= 5)
 		{
 			if (previousTowerCount < GetTowerCount())
 			{
@@ -122,6 +125,37 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 	return false;
 }
 
+bool Game::UpgradeTower(Tower* tower, short path)
+{
+	short LatestPath = tower->GetUpgradePath()[path];
+	if (tower->IsValidPath(path) && money >= MultiplyDefaultPrice(TOWER_UPGRADE[tower->GetId()][path][LatestPath]))
+	{
+		std::cout << "Path " << path << " cost / Latest Path: " << LatestPath << ": " << MultiplyDefaultPrice(TOWER_UPGRADE[tower->GetId()][path][LatestPath]) << " bought with " << money << "\n";
+		// use the , . / buttons to upgrade.
+		Mouse::setPosition(tower->GetPosition());
+
+		Mouse::leftMouseDown();
+		Clock::wait(.1f);
+
+		Mouse::leftMouseUp();
+		Clock::wait(.6f);
+
+		INPUT input = Keyboard::keyPress(MapVirtualKeyA(UPGRADE_KEY_CODE[path], 4));
+		Clock::wait(.3f);
+
+		Keyboard::keyRelease(input);
+
+		Mouse::setPosition(DeupgradePosition);
+		Mouse::leftMouseDown();
+		Clock::wait(.1f);
+		Mouse::leftMouseUp();
+
+		tower->IncreasePath(path);
+		return true;
+	}
+	return false;
+}
+
 bool Game::CanBuildTower(TowerName TowerName)
 {
 	int towerId = static_cast<int>(TowerName);
@@ -130,7 +164,7 @@ bool Game::CanBuildTower(TowerName TowerName)
 
 void Game::StartNextRound()
 {
-	INPUT input = Keyboard::keyPress(SPACE_SCAN_CODE);
+	INPUT input = Keyboard::keyPress(MapVirtualKeyA(SPACE_KEY_CODE, 4));
 	Clock::wait(.1f);
 	Keyboard::keyRelease(input);
 }

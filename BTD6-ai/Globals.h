@@ -1,20 +1,21 @@
 #pragma once
 #include <windows.h>
 #include <vector>
+#include <array>
 #include <string>
 
 /*
-1 : Easy
-2 : Medium
-3 : Hard
-4 : Impoppable
+0 : Easy
+1 : Medium
+2 : Hard
+3 : Impoppable
 */
-static const int DIFFICULTY = 1;
+static const short DIFFICULTY = 0;
 
-static const double Buy_Chance = 100;
-static const double Upgrade_Chance = 0;
+static const double Buy_Chance = 50; // Change this later to work like roblox
+static const double Upgrade_Chance = 100;
 
-static const short MaximumBuildAttempts = 200;
+static const short MaximumBuildAttempts = 20;
 
 
 
@@ -26,11 +27,11 @@ const int x_offset = 21;
 const int x_minus_offset = 232;
 const int y_offset = 61;
 
-static const std::vector<int> offsetsFromSimulation = { 0x02030D18, 0x248, 0x8, 0xB8, 0x20, 0xB0, 0x10, 0x0 };
-static const std::vector<int> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
-static const std::vector<int> offsetsToRound = { 0x270, 0x98, 0x0E0, 0x28 };
+static const std::vector<int> offsetsFromSimulation = { 0x02111C98, 0x18, 0x50, 0xB8, 0x0, 0xB0, 0x10, 0x0 };
 static const std::vector<int> offsetsToMoney = { 0x248, 0x18, 0x30, 0x10, 0x28 };
 static const std::vector<int> offsetsToHealth = { 0x260, 0x28 };
+static const std::vector<int> offsetsToRound = { 0x270, 0x98, 0x0E0, 0x28 };
+static const std::vector<int> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
 
 // VALUES BELOW ARE NOT RECOMENDED TO BE CHANGED
 
@@ -65,6 +66,8 @@ static std::vector<TowerName> ALLOWED_TOWERS =
 	TowerName::Ninja_Monkey,
 	TowerName::Bomb_Shooter
 };
+
+static std::array<short, 3> PATHS = { 0, 1, 2 };
 
 //http://www.kbdedit.com/manual/low_level_vk_list.html
 static const WORD TOWER_KEY_CODE[23] =

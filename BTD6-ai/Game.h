@@ -21,15 +21,17 @@ public:
 
 	double GetMoney();
 	double GetHealth();
-	int GetRoundCount();
+	double GetRoundCount();
 	int GetTowerCount();
 
 	int MultiplyDefaultPrice(double defaultPrice);
 
-	Tower GetRandomTower();
+	Tower* GetRandomTower();
 	Tower GetNextRandomTower(short indexCount);
 
 	bool PlaceTower(TowerName TowerName, Vector2 Position);
+
+    bool UpgradeTower(Tower* tower, short path);
 
 	bool CanBuildTower(TowerName TowerName);
 
@@ -62,7 +64,7 @@ private:
 
 	double money;
 	double health;
-	int roundCount;
+	double roundCount;
 	int towerCount;
 
 	std::vector<Tower> towers = {};
@@ -71,6 +73,7 @@ private:
 
 	Vector2 clientPosition;
 	Vector2 clientSize;
-	Vector2 DeselectPosition;
+	Vector2 DebuildPosition;
+	Vector2 DeupgradePosition;
 };
 
