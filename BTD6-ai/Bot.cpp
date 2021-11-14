@@ -42,7 +42,7 @@ void Bot::BuyRandomTower(Game* game)
 	}
 }
 
-void Bot::UpgradeRandomTower(Game* game)
+void Bot::UpgradeRandomTower(Game* game) // Vector error in this function
 {
 	Tower* randomTower = game->GetRandomTower();
 	short currentTowerIndex = 0;
@@ -81,15 +81,16 @@ bool Bot::GetUpgradeRound(Tower* tower, double remainingMoney, int round, double
 	int purchaseRound = 0;
 	int PredictiveRound = DIFFICULTY_ROUND[DIFFICULTY];
 
-	int totalCashByRound = ((CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[PredictiveRound - 1]) - CUMULATIVE_CASH[round]) + remainingMoney;
+	int totalCashByRound = ((CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[round]) - CUMULATIVE_CASH[round - 1]) + remainingMoney;
 	while (totalCashByRound < upgradePrice && PredictiveRound > round)
 	{
 		purchaseRound = PredictiveRound; // This is the round the bot is able to buy upgrade
 		PredictiveRound--;
-		totalCashByRound = ((CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[PredictiveRound - 1]) - CUMULATIVE_CASH[round]) + remainingMoney;
+		totalCashByRound = ((CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[round]) - CUMULATIVE_CASH[round - 1]) + remainingMoney;
 	}
 	if (purchaseRound)
 	{
+		std::cout << "Saving cash for " << tower->GetId() << " at path " << path << " until round " << purchaseRound << "\n";
 		UpgradeAction newAction = UpgradeAction{ purchaseRound, tower, path };
 		upgradeActions.push_back(newAction);
 		return true;
@@ -110,10 +111,11 @@ void Bot::SaveForRandomUpgrade(Game* game)
 	{
 		std::shuffle(PATHS.begin(), PATHS.end(), Random::GetEngine());
 		short currentPath = 0;
+		const int towerId = randomTower->GetId();
+
 		while (currentPath < 3)
 		{
 			const int path = PATHS[currentPath];
-			const int towerId = randomTower->GetId();
 
 			short LatestPath = randomTower->GetUpgradePath()[path];
 			if (randomTower->IsValidPath(path))
@@ -134,8 +136,13 @@ void Bot::SaveForRandomUpgrade(Game* game)
 
 void Bot::run(Game* game)
 {
-	double previousRound = -1;
+	double previousRound = 0;
 	double currentRound = game->GetRoundCount();
+
+	game->GetMoney();
+	BuyRandomTower(game);
+	game->StartNextRound();
+
 	while (game->GetHealth() > 0 && currentRound < DIFFICULTY_ROUND[DIFFICULTY])
 	{
 		if (currentRound > previousRound)
@@ -149,6 +156,7 @@ void Bot::run(Game* game)
 			{
 				if (upgradeAction.isReady(currentRound))
 				{
+					std::cout << "Bought saved upgrade\n";
 					Tower* tower = upgradeAction.getTower();
 					game->UpgradeTower(tower, upgradeAction.getPath());
 					savingForTower = false;

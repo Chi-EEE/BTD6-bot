@@ -118,6 +118,7 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 				Tower newTower = Tower{ TowerName, Position, roundCount };
 				towers.push_back(newTower);
 				moneySpent += TowerBuildCost;
+				std::cout << "Built tower id: " << static_cast<int>(TowerName) << "\n";
 				return true;
 			}
 			checkAttempts++;

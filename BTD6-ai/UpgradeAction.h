@@ -6,7 +6,7 @@
 class UpgradeAction : public Action
 {
 public:
-	UpgradeAction(double t_round, Tower* t_tower, short t_path);
+	UpgradeAction(int t_round, Tower* t_tower, short t_path);
 
 	Tower* getTower() { return tower; }
 	short getPath() { return path; }
