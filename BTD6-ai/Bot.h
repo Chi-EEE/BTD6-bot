@@ -2,6 +2,9 @@
 #include "Game.h"
 #include "Memory.h"
 #include "Vector2.h"
+#include "Action.h"
+#include "UpgradeAction.h"
+#include "BuildAction.h"
 
 class Bot
 {
@@ -13,10 +16,13 @@ public:
 	void run(Game* game);
 private:
 	Vector2 GetRandomPosition();
+	bool GetUpgradeRound(Tower* tower, double remainingMoney, int round, double upgradePrice, short path);
 
 	Vector2 ClientPosition;
 	Vector2 ClientSize;
-
-	//bool savingForTower;
+	std::vector<UpgradeAction> upgradeActions;
+	std::vector<std::unique_ptr<Action>> previousActions;
+	//std::vector<Action> actions;
+	bool savingForTower;
 };
 
