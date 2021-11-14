@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 
+#include "TowerName.h"
 /*
 0 : Easy
 1 : Medium
@@ -12,7 +13,7 @@
 */
 static const short DIFFICULTY = 0;
 
-static const double Buy_Chance = 50; // Change this later to work like roblox
+static const double Buy_Chance = 40; // Change this later to work like roblox
 static const double Upgrade_Chance = 100;
 
 static const short MaximumBuildAttempts = 20;
@@ -34,32 +35,6 @@ static const std::vector<int> offsetsToRound = { 0x270, 0x98, 0x0E0, 0x28 };
 static const std::vector<int> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
 
 // VALUES BELOW ARE NOT RECOMENDED TO BE CHANGED
-
-enum class TowerName {
-	Hero,
-	Dart_Monkey,
-	Boomerang_Monkey,
-	Bomb_Shooter,
-	Tack_Shooter,
-	Ice_Monkey,
-	Glue_Gunner,
-	Sniper_Monkey,
-	Monkey_Sub,
-	Monkey_Buccaneer,
-	Monkey_Ace,
-	Heli_Pilot,
-	Mortar_Monkey,
-	Dartling_Gunner,
-	Wizard_Monkey,
-	Super_Monkey,
-	Ninja_Monkey,
-	Alchemist,
-	Druid,
-	Banana_Farm,
-	Spike_Factory,
-	Monkey_Village,
-	Engineer_Monkey
-};
 
 static std::vector<TowerName> ALLOWED_TOWERS =
 {
@@ -97,18 +72,13 @@ static const WORD TOWER_KEY_CODE[23] =
 	0x4C
 };
 
-static UINT TOWER_SCAN_CODE[23];
-
 static const WORD UPGRADE_KEY_CODE[3] = {
 	0xBC,
 	0xBE,
 	0xBF
 };
 
-static UINT UPGRADE_SCAN_CODE[3];
-
 static const WORD SPACE_KEY_CODE = 0x20;
-static UINT SPACE_SCAN_CODE;
 
 // Easy = .85 math floor 5
 // hard = 1.08 math floor 5
@@ -127,6 +97,108 @@ const int DIFFICULTY_ROUND[4] =
 	60,
 	80,
 	100
+};
+
+const double CUMULATIVE_CASH[100] = {
+	711,
+	908,
+	1046,
+	1221,
+	1385,
+	1548,
+	1730,
+	1930,
+	2129,
+	2443,
+	2632,
+	2824,
+	3106,
+	3365,
+	3631,
+	3899,
+	4064,
+	4422,
+	4682,
+	4868,
+	5219,
+	5517,
+	5794,
+	5961, // Round 24 Camo
+	6296,
+	6629,
+	7291,
+	7557, // Round 28 Lead
+	8283,
+	8820,
+	9447,
+	9652,
+	10564,
+	11714,
+	12610,
+	13949,
+	15226,
+	16985,
+	17506, // Round 40 Moab
+	19687,
+	20346,
+	21624,
+	22918,
+	25340,
+	26056,
+	27693,
+	30536,
+	35294,
+	38310, // Round 50
+	39333,
+	40852.5,
+	41700.5,
+	43821,
+	46226.5,
+	47435,
+	49215.5,
+	51434.5,
+	53514,
+	54356.5, // Round 60 BFB
+	55459.7,
+	56716.5,
+	59412.1, // Round 63
+	60130.7,
+	63070.3,
+	63941.7,
+	64831.7,
+	65475.1,
+	66730.9,
+	69213.7,
+	70579.9,
+	71946.3,
+	73200.5,
+	76105.3,
+	78632.7,
+	79807.9,
+	82206.5,
+	86926.1,
+	93491.9,
+	94748.1, // Round 80 ZOMG
+	99969.3,
+	104580.7,
+	109183.3,
+	116080.1,
+	118557.5,
+	119338.6,
+	121797.7,
+	124942.5,
+	126943.4,
+	127111.7,
+	131130.8, // Round 91 DDT
+	135495.4,
+	137268.3,
+	144760.8,
+	148303.3,
+	158082.5,
+	159322.4,
+	168798,
+	171446.8,
+	172801.4 // Round 100 BAD
 };
 
 const int TOWER_UPGRADE[23][3][5] =

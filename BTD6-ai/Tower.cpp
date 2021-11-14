@@ -4,11 +4,12 @@
 #include "Clock.h"
 #include "Mouse.h"
 #include "Keyboard.h"
-Tower::Tower(TowerName t_TowerName, Vector2 t_Position)
+Tower::Tower(TowerName t_TowerName, Vector2 t_Position, double t_RoundBuilt)
 { 
 	Name = t_TowerName;
 	Id = static_cast<int>(t_TowerName);
 	Position = t_Position;
+	RoundBuilt = t_RoundBuilt;
 }
 
 void Tower::ChangePosition(Vector2 t_position)
@@ -18,15 +19,42 @@ void Tower::ChangePosition(Vector2 t_position)
 
 bool Tower::IsValidPath(short path)
 {
-	size_t NumberOfElements = sizeof(UpgradePath) / sizeof(UpgradePath[0]);
-	std::cout << "COunt: " << NumberOfElements << "\n"; // TOOOOOOOOOOOOOOOOOOOO FIX THE UPGRADE PATHS
-	if (NumberOfElements == 2)
+	if (pathsUpgraded >= 2)
 	{
 		if (UpgradePath[path] && UpgradePath[path] < 5)
 		{
-			return true;
+			// Return if third upgraded isn't here or third upgrade is equal to path
+			return !ThirdBuilt || ThirdBuilt == path + 1;
 		}
-		return false;
 	}
-	return true;
+	else if (!UpgradePath[path])
+	{
+		return true;
+	}
+	return false;
+}
+
+/// <summary>
+/// Increases the upgrade path
+/// [MAKE SURE TO CALL IsValidPath before this function]
+/// </summary>
+/// <param name="path"></param>
+void Tower::IncreasePath(short path, double currentRound)
+{
+	pathsUpgraded++;
+	UpgradePath[path]++;
+	if (UpgradePath[path] == 3)
+	{
+		ThirdBuilt = path + 1;
+	}
+	PathsUpgraded.push_back(path);
+	RoundsUpgraded.push_back(currentRound);
+}
+
+json Tower::toJSON()
+{
+	/*json towerJSON;
+
+	towerJSON*/
+	return json();
 }

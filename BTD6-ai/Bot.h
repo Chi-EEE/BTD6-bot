@@ -7,11 +7,16 @@ class Bot
 {
 public:
     Bot(Game* game);
-    void run(Game* game);
+	void BuyRandomTower(Game* game);
+	void UpgradeRandomTower(Game* game);
+	void SaveForRandomUpgrade(Game* game);
+	void run(Game* game);
 private:
 	Vector2 GetRandomPosition();
 
 	Vector2 ClientPosition;
 	Vector2 ClientSize;
+
+	//bool savingForTower;
 };
 

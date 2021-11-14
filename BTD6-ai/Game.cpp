@@ -87,15 +87,16 @@ Tower* Game::GetRandomTower()
 	return &towers[randomTowerIndexes[0]];
 }
 
-Tower Game::GetNextRandomTower(short indexCount)
+Tower* Game::GetNextRandomTower(short indexCount)
 {
-	return towers[randomTowerIndexes[indexCount]];
+	return &towers[randomTowerIndexes[indexCount]];
 }
 
 bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 {
 	int towerId = static_cast<int>(TowerName);
-	if (TOWER_BASE_COST[towerId] <= money)
+	const int TowerBuildCost = MultiplyDefaultPrice(TOWER_BASE_COST[towerId]);
+	if (TowerBuildCost <= money)
 	{
 		const int previousTowerCount = towerCount;
 		INPUT input = Keyboard::keyPress(MapVirtualKeyA(TOWER_KEY_CODE[towerId],4)); // Getting the SCAN Code in real time
@@ -114,8 +115,9 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 		{
 			if (previousTowerCount < GetTowerCount())
 			{
-				Tower newTower = Tower{ TowerName, Position };
+				Tower newTower = Tower{ TowerName, Position, roundCount };
 				towers.push_back(newTower);
+				moneySpent += TowerBuildCost;
 				return true;
 			}
 			checkAttempts++;
@@ -128,9 +130,10 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 bool Game::UpgradeTower(Tower* tower, short path)
 {
 	short LatestPath = tower->GetUpgradePath()[path];
-	if (tower->IsValidPath(path) && money >= MultiplyDefaultPrice(TOWER_UPGRADE[tower->GetId()][path][LatestPath]))
+	const int TowerUpgradeCost = MultiplyDefaultPrice(TOWER_UPGRADE[tower->GetId()][path][LatestPath]);
+	if (tower->IsValidPath(path) && money >= TowerUpgradeCost)
 	{
-		std::cout << "Path " << path << " cost / Latest Path: " << LatestPath << ": " << MultiplyDefaultPrice(TOWER_UPGRADE[tower->GetId()][path][LatestPath]) << " bought with " << money << "\n";
+		std::cout << "Path " << path << " cost / Latest Path: " << LatestPath << ": " << TowerUpgradeCost << " bought with " << money << "\n";
 		// use the , . / buttons to upgrade.
 		Mouse::setPosition(tower->GetPosition());
 
@@ -150,7 +153,8 @@ bool Game::UpgradeTower(Tower* tower, short path)
 		Clock::wait(.1f);
 		Mouse::leftMouseUp();
 
-		tower->IncreasePath(path);
+		tower->IncreasePath(path, roundCount);
+		moneySpent += TowerUpgradeCost;
 		return true;
 	}
 	return false;

@@ -16,6 +16,112 @@ Bot::Bot(Game* game)
 	ClientSize = game->GetClientSize();
 }
 
+void Bot::BuyRandomTower(Game* game)
+{
+	std::shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end(), Random::GetEngine());
+	short currentTower = 0;
+	while (currentTower < ALLOWED_TOWERS.size())
+	{
+		if (game->CanBuildTower(ALLOWED_TOWERS[currentTower]))
+		{
+			int buildAttempts = 0;
+			bool built = game->PlaceTower(ALLOWED_TOWERS[currentTower], GetRandomPosition());
+
+			// Keep on building until reached MaximumBuildAttempts
+			while (!built && buildAttempts < MaximumBuildAttempts)
+			{
+				built = game->PlaceTower(ALLOWED_TOWERS[currentTower], GetRandomPosition());
+				buildAttempts++;
+			}
+			if (built)
+			{
+				break;
+			}
+		}
+		currentTower++;
+	}
+}
+
+void Bot::UpgradeRandomTower(Game* game)
+{
+	Tower* randomTower = game->GetRandomTower();
+	short currentTowerIndex = 0;
+	bool upgradedTower = false;
+
+	int TowerCount = game->GetTowerCount();
+	while (!upgradedTower && currentTowerIndex < TowerCount) // Loop through all towers to see if able to be upgraded
+	{
+		std::shuffle(PATHS.begin(), PATHS.end(), Random::GetEngine());
+		short currentPath = 0;
+		while (currentPath < 3)
+		{
+			upgradedTower = game->UpgradeTower(randomTower, PATHS[currentPath]);
+			if (upgradedTower)
+			{
+				return;
+			}
+			currentPath++;
+		}
+		currentTowerIndex++;
+		randomTower = game->GetNextRandomTower(currentTowerIndex);
+	}
+}
+
+void Bot::SaveForRandomUpgrade(Game* game)
+{
+	int round = static_cast<int>(game->GetRoundCount());
+	int remainingMoney = game->GetMoney();
+	// random upgrade here
+	
+	int upgradePrice = 10000;
+	int remaining = 500;
+
+	Tower* randomTower = game->GetRandomTower();
+	int towerIndex = 0;
+	int TowerCount = game->GetTowerCount();
+	while (towerIndex < TowerCount)
+	{
+		int purchaseRound = 0;
+		int PredictiveRound = DIFFICULTY_ROUND[DIFFICULTY];
+
+		int totalCashByRound = ((CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[PredictiveRound - 1]) - CUMULATIVE_CASH[round]) + remainingMoney;
+		while (totalCashByRound < upgradePrice && PredictiveRound > round)
+		{
+			purchaseRound = PredictiveRound; // This is the round the bot is able to buy upgrade
+			PredictiveRound--;
+			totalCashByRound = ((CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[PredictiveRound - 1]) - CUMULATIVE_CASH[round]) + remainingMoney;
+		}
+		if (purchaseRound)
+		{
+			break;
+		}
+		towerIndex++;
+		randomTower = game->GetNextRandomTower(towerIndex);
+	}
+	// 
+	//Tower* randomTower = game->GetRandomTower();
+	//short currentTowerIndex = 0;
+	//bool upgradedTower = false;
+
+	//int TowerCount = game->GetTowerCount();
+	//while (!upgradedTower && currentTowerIndex < TowerCount) // Loop through all towers to see if able to be upgraded
+	//{
+	//	std::shuffle(PATHS.begin(), PATHS.end(), Random::GetEngine());
+	//	short currentPath = 0;
+	//	while (currentPath < 3)
+	//	{
+	//		upgradedTower = game->UpgradeTower(randomTower, PATHS[currentPath]);
+	//		if (upgradedTower)
+	//		{
+	//			return;
+	//		}
+	//		currentPath++;
+	//	}
+	//	currentTowerIndex++;
+	//	randomTower = game->GetNextRandomTower(currentTowerIndex);
+	//}
+}
+
 void Bot::run(Game* game)
 {
 	double previousRound = -1;
@@ -27,164 +133,19 @@ void Bot::run(Game* game)
 			game->GetMoney();
 			std::cout << "Next Round: " << currentRound << "\n";
 			previousRound = currentRound;
-			int chance = Random::getValue(1, 100); // Weakness: Can only do one action at a time each round
+			int chance = Random::getValue(1, 100); // Weakness: Can only do one action at a time each round (Max is 6 actions?
+			// Make bot able to save money to buy expensive tower
 			if (chance <= Buy_Chance)
 			{
-				std::random_shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end());
-				short currentTower = 0;
-				while (currentTower < ALLOWED_TOWERS.size())
-				{
-					if (game->CanBuildTower(ALLOWED_TOWERS[currentTower]))
-					{
-						int buildAttempts = 0;
-						bool built = game->PlaceTower(ALLOWED_TOWERS[currentTower], GetRandomPosition());
-
-						// Keep on building until reached MaximumBuildAttempts
-						while (!built && buildAttempts < MaximumBuildAttempts)
-						{
-							built = game->PlaceTower(ALLOWED_TOWERS[currentTower], GetRandomPosition());
-							buildAttempts++;
-						}
-						if (built)
-						{
-							break;
-						}
-					}
-					currentTower++;
-				}
+				BuyRandomTower(game);
 			}
 			else if (chance <= Upgrade_Chance)
 			{
-				Tower *randomTower = game->GetRandomTower();
-				std::random_shuffle(PATHS.begin(), PATHS.end()); // Still in order?
-				short currentPath = 0;
-				while (currentPath < 3)
-				{
-					std::cout << "Upgrade Path for: " << PATHS[currentPath] << "\n";
-					if (game->UpgradeTower(randomTower, PATHS[currentPath]))
-					{
-						break;
-					}
-					currentPath++;
-				}
+				UpgradeRandomTower(game);
 			}
 			std::cout << "-Start Next Round-\n";
 			game->StartNextRound();
 		}
 		currentRound = game->GetRoundCount();
 	}
-
-	//while (health > 0 && nowRound < DIFFICULTY_ROUND[difficulty])
-	//{
-	//	ReadProcessMemory(handle, roundAddress, &nowRound, sizeof(nowRound), NULL);
-	//	if (nowRound > previousRound) // Runs the following when the round finishes
-	//	{
-	//		ReadProcessMemory(handle, moneyAddress, &money, sizeof(money), NULL);
-
-	//		int chance = Random::getValue(1, 100);
-	//		// Don't need to go into big loop because the round didn't start
-	//		if (chance <= Buy_Chance)
-	//		{
-	//			std::random_shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end());
-
-	//			int currentBuildAttempts = 0;
-	//			short towerIndex = 0;
-	//			std::cout << "Placing Tower\n";
-	//			while (towerIndex < ALLOWED_TOWERS.size())
-	//			{
-	//				if (money > getDifficultyPrice(difficulty, TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[towerIndex])]))
-	//				{
-	//					/// <summary>
-	//					/// Gets a random position and tries to place tower in that position. 
-	//					/// </summary>
-	//					TowerName towerName;
-	//					Vector2 position;
-	//					bool builtTower = false;
-
-	//					while (towerCount <= Tower::getTowerCount() && !(currentBuildAttempts >= Build_Attempts))
-	//					{
-	//						{ // Place Tower
-	//							position = getRandomPosition();
-
-	//							towerName = ALLOWED_TOWERS[towerIndex];
-	//							INPUT input = Keyboard::keyPress(TOWER_SCAN_CODE[static_cast<int>(towerName)]);
-
-	//							Mouse::setPosition(position);
-	//							Mouse::leftMouseDown();
-
-	//							Clock::wait(.1f);
-	//							Keyboard::keyRelease(input);
-	//							Mouse::leftMouseUp();
-	//							Mouse::setPosition(offPosition);
-	//						}
-
-	//						ReadProcessMemory(handle, towerCountAddress, &towerCount, sizeof(towerCount), NULL);
-	//						currentBuildAttempts++;
-	//						Clock::wait(1.f);
-	//						builtTower = true;
-	//					} // Tower Count updates after it first places, example: place then another place and position is at the second place
-	//					if (builtTower && !(currentBuildAttempts >= Build_Attempts))
-	//					{
-	//						std::cout << static_cast<int>(towerName) << "\n";
-	//						Tower newTower = Tower{ towerName, position };
-	//						game.AddTower(newTower);
-	//					}
-	//					std::cout << "Done Building\n";
-	//					break;
-	//				}
-	//				else
-	//					towerIndex++;
-	//			}
-	//		}
-	//		else if (chance <= Upgrade_Chance)
-	//		{
-	//			std::vector<Tower> towers = game.getTowers();
-
-	//			std::vector<short> towerIndexes; // This method is for saving the upgrade paths later on
-	//			for (short i = 0; i < towers.size(); i++)
-	//			{
-	//				towerIndexes.push_back(i);
-	//			}
-	//			std::random_shuffle(towerIndexes.begin(), towerIndexes.end());
-
-	//			short currentTowerIndex = 0;
-	//			while (currentTowerIndex < towers.size())
-	//			{
-	//				Tower tower = towers[towerIndexes[currentTowerIndex]];
-	//				if (tower.hasUpgradedTwoPaths())
-	//				{
-	//					std::array<short, 2> chosenPaths = tower.getChosenPaths();
-	//					std::random_shuffle(chosenPaths.begin(), chosenPaths.end());
-
-	//					if (upgradeTower(difficulty, money, &tower, chosenPaths[0])) { break; }
-	//					else if (upgradeTower(difficulty, money, &tower, chosenPaths[1])) { break; }
-	//					else
-	//					{
-	//						currentTowerIndex++;
-	//						std::random_shuffle(paths.begin(), paths.end());
-	//					}
-	//				}
-	//				else
-	//				{
-	//					std::random_shuffle(paths.begin(), paths.end());
-	//					if (upgradeTower(difficulty, money, &tower, paths[0])) { break; }
-	//					else if (upgradeTower(difficulty, money, &tower, paths[1])) { break; }
-	//					else if (upgradeTower(difficulty, money, &tower, paths[2])) { break; }
-	//					else
-	//					{
-	//						currentTowerIndex++;
-	//						std::random_shuffle(paths.begin(), paths.end());
-	//					}
-	//				}
-	//			}
-	//		}
-	//		std::cout << "Next Round\n";
-	//		INPUT input = Keyboard::keyPress(SPACE_SCAN_CODE);
-	//		Clock::wait(.1f);
-	//		Keyboard::keyRelease(input);
-	//		//game.StartNextRound();
-	//		previousRound = nowRound;
-	//	}
-	//	ReadProcessMemory(handle, healthAddress, &health, sizeof(health), NULL);
-	//}
 }

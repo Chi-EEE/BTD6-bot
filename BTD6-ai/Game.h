@@ -27,7 +27,7 @@ public:
 	int MultiplyDefaultPrice(double defaultPrice);
 
 	Tower* GetRandomTower();
-	Tower GetNextRandomTower(short indexCount);
+	Tower* GetNextRandomTower(short indexCount);
 
 	bool PlaceTower(TowerName TowerName, Vector2 Position);
 
@@ -40,6 +40,8 @@ public:
 	//void moveMouseToFarms();
 
 	void AddTower(Tower tower);
+
+	int GetTotalMoneySpent() { return moneySpent; }
 
 	std::vector<Tower> getTowers() { return towers; }
 
@@ -67,6 +69,7 @@ private:
 	double roundCount;
 	int towerCount;
 
+	int moneySpent;
 	std::vector<Tower> towers = {};
 	std::vector<short> randomTowerIndexes = {};
 	std::vector<Vector2> farmPositions = {};
