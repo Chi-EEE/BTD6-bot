@@ -73,7 +73,7 @@ int Game::MultiplyDefaultPrice(double defaultPrice)
 	return static_cast<int>(((defaultPrice * DIFFICULTY_MULTIPLIER[DIFFICULTY])) / 5) * 5;
 }
 
-Tower* Game::GetRandomTower()
+Tower* Game::GetRandomTower() // Error when there is no tower in array
 {
 	//if (randomTowerIndexes.size() != towers.size())
 	//{

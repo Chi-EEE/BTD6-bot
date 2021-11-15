@@ -13,11 +13,11 @@
 */
 static const short DIFFICULTY = 0;
 
-static const double Buy_Chance = 33; // Change this later to work like roblox
-static const double Upgrade_Chance = 66;
+static const double Buy_Chance = 0; // Change this later to work like roblox
+static const double Upgrade_Chance = 100;
 static const double SAVE_Chance = 100;
 
-static const short MaximumBuildAttempts = 20;
+static const short MaximumBuildAttempts = 50;
 
 
 

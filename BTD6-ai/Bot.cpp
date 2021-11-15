@@ -42,7 +42,7 @@ void Bot::BuyRandomTower(Game* game)
 	}
 }
 
-void Bot::UpgradeRandomTower(Game* game) // Vector error in this function
+void Bot::UpgradeRandomTower(Game* game)
 {
 	Tower* randomTower = game->GetRandomTower();
 	short currentTowerIndex = 0;
