@@ -17,7 +17,6 @@ public:
 private:
 	Vector2 GetRandomPosition();
 	bool GetUpgradeRound(Tower* tower, double remainingMoney, int round, double upgradePrice, short path);
-
 	Vector2 ClientPosition;
 	Vector2 ClientSize;
 	std::vector<UpgradeAction> upgradeActions;

@@ -26,8 +26,9 @@ public:
 
 	int MultiplyDefaultPrice(double defaultPrice);
 
-	Tower* GetRandomTower();
-	Tower* GetNextRandomTower(short indexCount);
+	void RandomizeTowers();
+
+	Tower* GetRandomTower(short indexCount);
 
 	bool PlaceTower(TowerName TowerName, Vector2 Position);
 

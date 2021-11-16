@@ -73,7 +73,7 @@ int Game::MultiplyDefaultPrice(double defaultPrice)
 	return static_cast<int>(((defaultPrice * DIFFICULTY_MULTIPLIER[DIFFICULTY])) / 5) * 5;
 }
 
-Tower* Game::GetRandomTower() // Error when there is no tower in array
+void Game::RandomizeTowers() // Error when there is no tower in array
 {
 	//if (randomTowerIndexes.size() != towers.size())
 	//{
@@ -84,10 +84,9 @@ Tower* Game::GetRandomTower() // Error when there is no tower in array
 		}
 	//}
 	std::shuffle(randomTowerIndexes.begin(), randomTowerIndexes.end(), Random::GetEngine());
-	return &towers[randomTowerIndexes[0]];
 }
 
-Tower* Game::GetNextRandomTower(short indexCount)
+Tower* Game::GetRandomTower(short indexCount)
 {
 	return &towers[randomTowerIndexes[indexCount]];
 }
