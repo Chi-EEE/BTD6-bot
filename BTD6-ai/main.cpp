@@ -69,8 +69,6 @@ char* getSimulationAddress(HANDLE handle) // Instead of looking for sim, get sta
 
 int main()
 {
-	//Keyboard::Initalise();
-
 	std::cout << "Waiting 5 seconds" << std::endl;
 	Clock::wait(5.f);
 	Bot bot = Bot{ &game };

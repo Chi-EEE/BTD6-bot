@@ -1,7 +1,7 @@
 #include "BuildAction.h"
 
-BuildAction::BuildAction(double t_round, TowerName tower)
+BuildAction::BuildAction(int t_round, TowerName t_towerName)
 {
 	round = t_round;
-	tower = tower;
+	towerName = t_towerName;
 }

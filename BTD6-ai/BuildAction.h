@@ -5,7 +5,8 @@
 
 class BuildAction: public Action
 {
-	BuildAction(double t_round, TowerName tower);
+public:
+	BuildAction(int t_round, TowerName t_towerName);
 
 	TowerName getTowerName() { return towerName; }
 private:

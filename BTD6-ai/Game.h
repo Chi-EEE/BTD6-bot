@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <iostream>
 #include <vector>
-#include <string>
 
 #include "Memory.h"
 #include "Window.h"
@@ -38,16 +37,14 @@ public:
 
 	void StartNextRound();
 
-	//void moveMouseToFarms();
-
 	void AddTower(Tower tower);
 
 	int GetTotalMoneySpent() { return moneySpent; }
 
 	std::vector<Tower> getTowers() { return towers; }
 
-	Vector2 GetClientPosition() { return clientPosition; }
-	Vector2 GetClientSize() { return clientSize; }
+	Vector2 GetPlayPosition() { return playBoxPosition; }
+	Vector2 GetPlaySize() { return playBoxSize; }
 private:
 
 	HANDLE handle;
@@ -73,11 +70,13 @@ private:
 	int moneySpent;
 	std::vector<Tower> towers = {};
 	std::vector<short> randomTowerIndexes = {};
-	std::vector<Vector2> farmPositions = {};
 
 	Vector2 clientPosition;
 	Vector2 clientSize;
+
+	Vector2 playBoxPosition;
+	Vector2 playBoxSize;
+
 	Vector2 DebuildPosition;
-	Vector2 DeupgradePosition;
 };
 

@@ -20,11 +20,13 @@ void Game::GetPositions()
 	RECT windowPosition = Window::GetRect(hwnd); // Window Position
 	RECT windowSize = Window::GetSizeRect(hwnd); // Playable Window Size
 
-	clientPosition = Vector2{ windowPosition.left + x_offset, windowPosition.top + y_offset }; //Top left corner of playable window without hitting ui
+	clientPosition = Vector2{ windowPosition.left + x_offset, windowPosition.top + y_offset}; //Top left corner of playable window without hitting ui
 	clientSize = Vector2{ windowSize.right - x_offset - x_minus_offset, windowSize.bottom - y_offset }; // Playable section of screen without hitting the store ui
 
+	playBoxPosition = Vector2{ clientPosition.X + left_margin, clientPosition.Y + top_margin };
+	playBoxSize = Vector2{ clientSize.X - left_margin - right_margin, clientSize.Y - top_margin - bottom_margin };
+
 	DebuildPosition = Vector2{ clientSize.X + 200, clientSize.Y + 101 };
-	DeupgradePosition = Vector2{ clientSize.X + 175, clientSize.Y + 101 };
 }
 
 void Game::GetMemoryAddresses()
@@ -148,13 +150,13 @@ bool Game::UpgradeTower(Tower* tower, short path)
 
 		Keyboard::keyRelease(input);
 
-		Mouse::setPosition(DeupgradePosition);
 		Mouse::leftMouseDown();
 		Clock::wait(.1f);
 		Mouse::leftMouseUp();
 
 		tower->IncreasePath(path, roundCount);
 		moneySpent += TowerUpgradeCost;
+		Clock::wait(.4f); // So we can buy multiple upgrades without hitting the ui when buying other tower upgrades
 		return true;
 	}
 	return false;
@@ -172,15 +174,6 @@ void Game::StartNextRound()
 	Clock::wait(.1f);
 	Keyboard::keyRelease(input);
 }
-
-//void Game::moveMouseToFarms()
-//{ 
-//	for (Vector2 position : farmPositions)
-//	{
-//		Clock::wait(.1f);
-//		Mouse::setPosition(position);
-//	}
-//}
 
 void Game::AddTower(Tower tower)
 {

@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <vector>
 #include <array>
-#include <string>
 
 #include "TowerName.h"
 /*
@@ -11,11 +10,9 @@
 2 : Hard
 3 : Impoppable
 */
-static const short DIFFICULTY = 0;
+static const short DIFFICULTY = 1;
 
-static const double Buy_Chance = 33; // Change this later to work like roblox
-static const double Upgrade_Chance = 66;
-static const double SAVE_Chance = 100;
+static const double Buy_Chance = 50;
 
 static const short MaximumBuildAttempts = 50;
 
@@ -27,7 +24,12 @@ static const short MaximumBuildAttempts = 50;
 
 const int x_offset = 21;
 const int x_minus_offset = 232;
-const int y_offset = 61;
+const int y_offset = 92;
+
+const int top_margin = 83;
+const int bottom_margin = 117;
+const int left_margin = 157;
+const int right_margin = 158;
 
 static const std::vector<int> offsetsFromSimulation = { 0x02111C98, 0x18, 0x50, 0xB8, 0x0, 0xB0, 0x10, 0x0 };
 static const std::vector<int> offsetsToMoney = { 0x248, 0x18, 0x30, 0x10, 0x28 };
@@ -39,8 +41,27 @@ static const std::vector<int> offsetsToTowerCount = { 0x68, 0x18, 0x30, 0x10 };
 
 static std::vector<TowerName> ALLOWED_TOWERS =
 {
+	TowerName::Dart_Monkey,
+	TowerName::Boomerang_Monkey,
+	TowerName::Bomb_Shooter,
+	TowerName::Tack_Shooter,
+	TowerName::Ice_Monkey,
+	TowerName::Glue_Gunner,
+	TowerName::Sniper_Monkey,
+	TowerName::Monkey_Sub,
+	TowerName::Monkey_Buccaneer,
+	TowerName::Monkey_Ace,
+	TowerName::Heli_Pilot,
+	TowerName::Mortar_Monkey,
+	TowerName::Dartling_Gunner,
+	TowerName::Wizard_Monkey,
+	TowerName::Super_Monkey,
 	TowerName::Ninja_Monkey,
-	TowerName::Bomb_Shooter
+	TowerName::Alchemist,
+	TowerName::Druid,
+	TowerName::Spike_Factory,
+	TowerName::Monkey_Village,
+	TowerName::Engineer_Monkey
 };
 
 static std::array<short, 3> PATHS = { 0, 1, 2 };
@@ -100,6 +121,7 @@ const int DIFFICULTY_ROUND[4] =
 	100
 };
 
+// Make AI work without cumulative cash array past 100
 const double CUMULATIVE_CASH[100] = {
 	711,
 	908,
