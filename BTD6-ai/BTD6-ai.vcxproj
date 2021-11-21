@@ -139,7 +139,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Action.cpp" />
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="BuildAction.cpp" />
     <ClCompile Include="Clock.cpp" />
@@ -164,6 +163,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Region.h" />
     <ClInclude Include="Tower.h" />

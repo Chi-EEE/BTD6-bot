@@ -29,6 +29,8 @@ public:
 
 	Tower* GetRandomTower(short indexCount);
 
+	short GetRandomTowerIndex(short indexCount);
+
 	bool PlaceTower(TowerName TowerName, Vector2 Position);
 
     bool UpgradeTower(Tower* tower, short path);
@@ -38,8 +40,6 @@ public:
 	void StartNextRound();
 
 	void AddTower(Tower tower);
-
-	int GetTotalMoneySpent() { return moneySpent; }
 
 	std::vector<Tower> getTowers() { return towers; }
 
@@ -67,10 +67,6 @@ private:
 	double roundCount;
 	int towerCount;
 
-	int moneySpent;
-	std::vector<Tower> towers = {};
-	std::vector<short> randomTowerIndexes = {};
-
 	Vector2 clientPosition;
 	Vector2 clientSize;
 
@@ -78,5 +74,10 @@ private:
 	Vector2 playBoxSize;
 
 	Vector2 DebuildPosition;
+
+
+	std::vector<Tower> towers = {};
+	std::vector<short> randomTowerIndexes = {};
+	bool HeroPlaced = false;
 };
 

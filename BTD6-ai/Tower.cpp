@@ -50,11 +50,3 @@ void Tower::IncreasePath(short path, double currentRound)
 	PathsUpgraded.push_back(path);
 	RoundsUpgraded.push_back(currentRound);
 }
-
-json Tower::toJSON()
-{
-	/*json towerJSON;
-
-	towerJSON*/
-	return json();
-}

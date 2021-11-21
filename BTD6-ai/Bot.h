@@ -1,4 +1,7 @@
 #pragma once
+#include <queue>
+#include "json.hpp"
+
 #include "Game.h"
 #include "Memory.h"
 #include "Vector2.h"
@@ -6,24 +9,25 @@
 #include "UpgradeAction.h"
 #include "BuildAction.h"
 
+using json = nlohmann::json;
 class Bot
 {
 public:
     Bot(Game* game);
 	void run(Game* game);
+	bool BuyHero(Game* game);
 	bool BuyRandomTower(Game* game);
 	bool SaveForRandomTower(Game* game);
 	bool UpgradeRandomTower(Game* game);
 	bool SaveForRandomUpgrade(Game* game);
+
+	void Save();
 private:
 	Vector2 GetRandomPosition();
-	bool GetUpgradeRound(Tower* tower, double health, double remainingMoney, int round, double upgradePrice, short path);
+	bool GetUpgradeRound(Game* game, short towerIndex, double upgradePrice, short path);
 	Vector2 ClientPosition;
 	Vector2 ClientSize;
-	std::vector<UpgradeAction> upgradeActions;
-	std::vector <BuildAction> buildActions;
-	bool savingForPurchase = false;
-	//std::vector<std::unique_ptr<Action>> previousActions;
-	//std::vector<Action> actions;
+	std::queue <Action*> actions;
+	//std::vector <Action*> previousActions;
 };
 

@@ -93,38 +93,46 @@ Tower* Game::GetRandomTower(short indexCount)
 	return &towers[randomTowerIndexes[indexCount]];
 }
 
+short Game::GetRandomTowerIndex(short indexCount)
+{
+	return randomTowerIndexes[indexCount];
+}
+
+/// <summary>
+/// Places tower down without verifying that the bot has enough money
+/// MUST VERIFY BEFORE USING THIS FUNCTION
+/// </summary>
+/// <param name="TowerName"></param>
+/// <param name="Position"></param>
+/// <returns></returns>
 bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 {
 	int towerId = static_cast<int>(TowerName);
 	const int TowerBuildCost = MultiplyDefaultPrice(TOWER_BASE_COST[towerId]);
-	if (TowerBuildCost <= money)
+	const int previousTowerCount = towerCount;
+	INPUT input = Keyboard::keyPress(MapVirtualKeyA(TOWER_KEY_CODE[towerId], 4)); // Getting the SCAN Code in real time
+
+	Mouse::setPosition(Position);
+	Mouse::leftMouseDown();
+
+	Clock::wait(.3f);
+	Keyboard::keyRelease(input);
+	Mouse::leftMouseUp();
+	Mouse::setPosition(DebuildPosition);
+
+	// Loop to check if the tower count has increased
+	int checkAttempts = 0;
+	while (checkAttempts <= 5)
 	{
-		const int previousTowerCount = towerCount;
-		INPUT input = Keyboard::keyPress(MapVirtualKeyA(TOWER_KEY_CODE[towerId],4)); // Getting the SCAN Code in real time
-		
-		Mouse::setPosition(Position);
-		Mouse::leftMouseDown();
-
-		Clock::wait(.3f);
-		Keyboard::keyRelease(input);
-		Mouse::leftMouseUp();
-		Mouse::setPosition(DebuildPosition);
-
-		// Loop to check if the tower count has increased
-		int checkAttempts = 0;
-		while (checkAttempts <= 5)
+		if (previousTowerCount < GetTowerCount())
 		{
-			if (previousTowerCount < GetTowerCount())
-			{
-				Tower newTower = Tower{ TowerName, Position, roundCount };
-				towers.push_back(newTower);
-				moneySpent += TowerBuildCost;
-				std::cout << "Built tower id: " << static_cast<int>(TowerName) << "\n";
-				return true;
-			}
-			checkAttempts++;
-			Clock::wait(0.1f);
+			Tower newTower = Tower{ TowerName, Position, roundCount };
+			towers.push_back(newTower);
+			std::cout << "Built tower id: " << static_cast<int>(TowerName) << "\n";
+			return true;
 		}
+		checkAttempts++;
+		Clock::wait(0.1f);
 	}
 	return false;
 }
@@ -155,7 +163,6 @@ bool Game::UpgradeTower(Tower* tower, short path)
 		Mouse::leftMouseUp();
 
 		tower->IncreasePath(path, roundCount);
-		moneySpent += TowerUpgradeCost;
 		Clock::wait(.4f); // So we can buy multiple upgrades without hitting the ui when buying other tower upgrades
 		return true;
 	}
@@ -165,7 +172,8 @@ bool Game::UpgradeTower(Tower* tower, short path)
 bool Game::CanBuildTower(TowerName TowerName)
 {
 	int towerId = static_cast<int>(TowerName);
-	return TOWER_BASE_COST[towerId] <= money;
+	
+	return MultiplyDefaultPrice(TOWER_BASE_COST[towerId]) <= money;
 }
 
 void Game::StartNextRound()

@@ -4,9 +4,6 @@
 
 #include <iostream>
 
-#include "json.hpp"
-using json = nlohmann::json;
-
 #include "Globals.h"
 #include "Vector2.h"
 
@@ -27,8 +24,6 @@ public:
 	void IncreasePath(short path, double currentRound);
 	
 	TowerName getTowerName() { return Name; }
-
-	json toJSON();
 private:
 	TowerName Name;
 	int Id;

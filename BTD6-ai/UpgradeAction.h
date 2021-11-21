@@ -6,11 +6,11 @@
 class UpgradeAction : public Action
 {
 public:
-	UpgradeAction(int t_round, Tower* t_tower, short t_path);
+	UpgradeAction(int t_round, short t_towerIndex, short t_path);
 
-	Tower* getTower() { return tower; }
+	short getTowerIndex() { return towerIndex; }
 	short getPath() { return path; }
 private:
-	Tower* tower; // Tower to do action on
+	short towerIndex;
 	short path;
 };
