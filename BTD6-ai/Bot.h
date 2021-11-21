@@ -24,10 +24,10 @@ public:
 	void Save();
 private:
 	Vector2 GetRandomPosition();
-	bool GetUpgradeRound(Game* game, short towerIndex, double upgradePrice, short path);
+	bool GetUpgradeRound(Game* game, Tower* tower, short towerIndex, double upgradePrice, short path);
 	Vector2 ClientPosition;
 	Vector2 ClientSize;
 	std::queue <Action*> actions;
-	//std::vector <Action*> previousActions;
+	std::vector <Action*> previousActions;
 };
 

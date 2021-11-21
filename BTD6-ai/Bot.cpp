@@ -1,6 +1,8 @@
 #include "Bot.h"
 
 #include <vector>
+#include <iomanip>
+#include <fstream>
 
 #include "Globals.h"
 #include "Random.h"
@@ -32,7 +34,6 @@ void Bot::run(Game* game)
 	{
 		if (currentRound > previousRound)
 		{
-			std::cout << "Next Round: " << currentRound << "\n";
 			previousRound = currentRound;
 			game->GetMoney();
 			if (!actions.empty())
@@ -43,25 +44,25 @@ void Bot::run(Game* game)
 				{
 					BuildAction* currentBuildAction = (BuildAction*)actions.front();
 					TowerName towerName = currentBuildAction->getTowerName();
-					std::cout << "builddd\n";
 					if (game->CanBuildTower(towerName))
 					{
 						int buildAttempts = 0;
-						bool built = false;
+						Tower* tower = nullptr;
 
 						// Keep on building until reached MaximumBuildAttempts
 						while (buildAttempts < MaximumBuildAttempts)
 						{
-							built = game->PlaceTower(towerName, GetRandomPosition());
-							if (built)
+							tower = game->PlaceTower(towerName, GetRandomPosition());
+							if (tower)
 							{
-								std::cout << "Bought saved tower\n";
+								std::cout << "[BUILD][PURCHASED]: " << static_cast<int>(towerName) << "\n";
+
+								currentBuildAction->setPosition(tower->GetPosition());
+								previousActions.push_back(new BuildAction{ currentBuildAction });
 								break;
 							}
 							buildAttempts++;
 						}
-						// Remove action because can't build tower
-						//previousActions.push_back(actions.front());
 						delete actions.front();
 						actions.pop();
 					}
@@ -69,19 +70,17 @@ void Bot::run(Game* game)
 				break;
 				case ActionType::Upgrade:
 				{
-					std::cout << "upppp\n";
 					UpgradeAction* currentUpgradeAction = (UpgradeAction*)actions.front();
-					Tower* currentTower = &(game->getTowers()[currentUpgradeAction->getTowerIndex()]);
+					Tower* currentTower = game->GetTower(currentUpgradeAction->getTowerIndex());
 
 					if (game->UpgradeTower(currentTower, currentUpgradeAction->getPath()))
 					{
-						std::cout << "Bought saved upgrade\n";
+						std::cout << "[UPGRADE][PURCHASED]: " << static_cast<int>(currentTower->getTowerName()) << "\n";
+						previousActions.push_back(actions.front());
 						actions.pop();
 					}
 				}
 				break;
-				default:
-					std::cout << static_cast<int>(actions.front()->getType()) << ": Action int\n";
 				}
 			}
 			else
@@ -91,62 +90,71 @@ void Bot::run(Game* game)
 
 				if (optionChance <= Buy_Chance)
 				{
+					std::cout << "[BUILD]";
 					if (buyOrSaveChance <= 60) // Buy
 					{
-						std::cout << "Buying Random\n";
+						std::cout << "[BUYING]";
 						BuyRandomTower(game);
 					}
 					else // Save 40%
 					{
-						std::cout << "Save Buy Random\n";
+						//std::cout << "Save Buy Random\n"
+						std::cout << "[SAVE]";;
 						if (!SaveForRandomTower(game))
 						{
-							std::cout << "nvm\n";
+							std::cout << "[BUYING]";
+							//std::cout << "nvm\n";
 							BuyRandomTower(game);
 						}
 					}
 				}
 				else // Upgrading
 				{
+					std::cout << "[UPGRADE]";
 					if (buyOrSaveChance <= 60) // Buy
 					{
-						std::cout << "Buying Random Upgrade\n";
+						std::cout << "[BUYING]";
 						UpgradeRandomTower(game);
 					}
 					else // Save 40%
 					{
-						std::cout << "Save Buy Random Upgrade\n";
+						std::cout << "[SAVE]";;
 						SaveForRandomUpgrade(game);
 					}
 				}
 			}
-			std::cout << "-Start Next Round-\n";
+			std::cout << "-[NEXT ROUND : " << currentRound + 1 << "]-\n";
 			game->StartNextRound();
 		}
 		currentRound = static_cast<int>(game->GetRoundCount());
 	}
+	Save();
 }
 
 bool Bot::BuyHero(Game* game)
 {
 	game->GetMoney();
+	double round = game->GetRoundCount();
 
 	if (game->CanBuildTower(TowerName::Hero))
 	{
 		int buildAttempts = 0;
-		bool built = false;
+		Tower* tower = false;
 
 		// Keep on building until reached MaximumBuildAttempts
 		while (buildAttempts < MaximumBuildAttempts)
 		{
-			built = game->PlaceTower(TowerName::Hero, GetRandomPosition());
-			if (built)
+			tower = game->PlaceTower(TowerName::Hero, GetRandomPosition());
+			if (tower)
 			{
+				std::cout << " Tower ID:[" << static_cast<int>(TowerName::Hero) << "]\n";
+				previousActions.push_back(new BuildAction{ static_cast<int>(round), TowerName::Hero, tower->GetPosition() });
 				return true;
 			}
 			buildAttempts++;
 		}
 	}
+	std::cout << "[NVM]\n";
 	return false;
 }
 
@@ -154,30 +162,35 @@ bool Bot::BuyRandomTower(Game* game)
 {
 	game->GetMoney();
 
+	double round = game->GetRoundCount();
 	std::shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end(), Random::GetEngine());
-	short currentTower = 0;
-	while (currentTower < ALLOWED_TOWERS.size())
+	short currentTowerCount = 0;
+	while (currentTowerCount < ALLOWED_TOWERS.size())
 	{
-		std::cout << "Attempting to build tower id: " << static_cast<int>(ALLOWED_TOWERS[currentTower]) << "\n";
-		TowerName towerName = ALLOWED_TOWERS[currentTower];
+		//std::cout << "Attempting to build tower id: " << static_cast<int>(ALLOWED_TOWERS[currentTower]) << "\n";
+		TowerName towerName = ALLOWED_TOWERS[currentTowerCount];
 		if (game->CanBuildTower(towerName))
 		{
 			int buildAttempts = 0;
-			bool built = false;
+			Tower* tower = nullptr;
 
 			// Keep on building until reached MaximumBuildAttempts
 			while (buildAttempts < MaximumBuildAttempts)
 			{
-				built = game->PlaceTower(towerName, GetRandomPosition());
-				if (built)
+				tower = game->PlaceTower(towerName, GetRandomPosition());
+				if (tower)
 				{
+					std::cout << " Tower ID:[" << static_cast<int>(ALLOWED_TOWERS[currentTowerCount]) << "]\n";
+
+					previousActions.push_back(new BuildAction{ static_cast<int>(round), towerName, tower->GetPosition() });
 					return true;
 				}
 				buildAttempts++;
 			}
 		}
-		currentTower++;
+		currentTowerCount++;
 	}
+	std::cout << "[NVM]\n";
 	return false;
 }
 
@@ -188,12 +201,12 @@ bool Bot::SaveForRandomTower(Game* game)
 	int round = static_cast<int>(game->GetRoundCount());
 
 	double addedMoney = money - (health - 1);
-	int towerIndex = 0;
+	int currentTowerCount = 0;
 
 	std::shuffle(ALLOWED_TOWERS.begin(), ALLOWED_TOWERS.end(), Random::GetEngine());
-	while (towerIndex < ALLOWED_TOWERS.size())
+	while (currentTowerCount < ALLOWED_TOWERS.size())
 	{
-		int towerPrice = game->MultiplyDefaultPrice(TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[towerIndex])]);
+		int towerPrice = game->MultiplyDefaultPrice(TOWER_BASE_COST[static_cast<int>(ALLOWED_TOWERS[currentTowerCount])]);
 		if (money < towerPrice)
 		{
 			int PredictiveRound = min(round + 3, DIFFICULTY_ROUND[DIFFICULTY] - 1);
@@ -208,11 +221,8 @@ bool Bot::SaveForRandomTower(Game* game)
 				{
 					if (purchaseRound)
 					{
-						std::cout << "Saving Cash for towerIndex: " << static_cast<int>(ALLOWED_TOWERS[towerIndex]) <<
-							" costing " << towerPrice <<
-							" until round (displayed)" << purchaseRound + 1 <<
-							" with " << totalCashByRound << " money." << "\n";
-						actions.push(new BuildAction{ round, ALLOWED_TOWERS[towerIndex] });
+						std::cout << " Tower ID:[" << static_cast<int>(ALLOWED_TOWERS[currentTowerCount]) << "] | Price:[" << towerPrice << "] | Round:[" << purchaseRound + 1 << "]\n";
+						actions.push(new BuildAction{ purchaseRound + 1, ALLOWED_TOWERS[currentTowerCount] });
 						return true;
 					}
 					break;
@@ -221,7 +231,7 @@ bool Bot::SaveForRandomTower(Game* game)
 				PredictiveRound--;
 			}
 		}
-		towerIndex++;
+		currentTowerCount++;
 	}
 	return false;
 }
@@ -229,8 +239,10 @@ bool Bot::SaveForRandomTower(Game* game)
 bool Bot::UpgradeRandomTower(Game* game)
 {
 	game->GetMoney();
-
+	double round = game->GetRoundCount();
 	int TowerCount = game->GetTowerCount();
+
+	short towerIndex = 0;
 	Tower* randomTower = nullptr;
 
 	bool upgradedTower = false;
@@ -239,8 +251,9 @@ bool Bot::UpgradeRandomTower(Game* game)
 	game->RandomizeTowers();
 	while (currentTowerIndex < TowerCount) // Loop through all towers to see if able to be upgraded
 	{
-		randomTower = game->GetRandomTower(currentTowerIndex);
-		currentTowerIndex++;
+		towerIndex = game->GetRandomTowerIndex(currentTowerIndex);
+		randomTower = game->GetTower(towerIndex);
+
 		std::shuffle(PATHS.begin(), PATHS.end(), Random::GetEngine());
 		short currentPath = 0;
 		while (currentPath < 3)
@@ -249,25 +262,18 @@ bool Bot::UpgradeRandomTower(Game* game)
 			upgradedTower = game->UpgradeTower(randomTower, path);
 			if (upgradedTower)
 			{
+				std::cout << " Tower ID:[" << randomTower->GetId() << "]\n";
+				previousActions.push_back(new UpgradeAction{ static_cast<int>(round), randomTower->GetId(), path });
 				return true;
 			}
 			currentPath++;
 		}
+		currentTowerIndex++;
 	}
 	return false;
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="tower"></param>
-/// <param name="health"></param>
-/// <param name="remainingMoney"></param>
-/// <param name="round"></param>
-/// <param name="upgradePrice"></param>
-/// <param name="path"></param>
-/// <returns></returns>
-bool Bot::GetUpgradeRound(Game* game, short towerIndex, double upgradePrice, short path)
+bool Bot::GetUpgradeRound(Game* game, Tower* tower, short towerIndex, double upgradePrice, short path)
 {
 	double money = game->GetMoney();
 	double health = game->GetHealth();
@@ -279,7 +285,7 @@ bool Bot::GetUpgradeRound(Game* game, short towerIndex, double upgradePrice, sho
 	double addedMoney = money - (health - 1);
 	double totalCashByRound = -1;
 	
-	std::cout << "Predictive Round: " << PredictiveRound << "\n";
+	//std::cout << "Predictive Round: " << PredictiveRound << "\n";
 	while (PredictiveRound > round)
 	{
 		totalCashByRound = (CUMULATIVE_CASH[PredictiveRound] - CUMULATIVE_CASH[round]) + addedMoney;
@@ -289,7 +295,7 @@ bool Bot::GetUpgradeRound(Game* game, short towerIndex, double upgradePrice, sho
 			//std::cout << "-------Total cash by round << " << PredictiveRound << ": " << totalCashByRound << "\n";
 			if (purchaseRound)
 			{
-				//std::cout << "Saving Cash for " << tower->GetId() << " at path " << path + 1 << " costing " << upgradePrice << " until round (displayed)" << purchaseRound + 1 << " with " << totalCashByRound << " money." << "\n";
+				std::cout << " Tower ID:[" << tower->GetId() << "] | Price:[" << upgradePrice << "] | Round:[" << purchaseRound + 1 << "]\n";
 				actions.push(new UpgradeAction{ purchaseRound, towerIndex, path });
 				return true;
 			}
@@ -306,35 +312,35 @@ bool Bot::SaveForRandomUpgrade(Game* game)
 	int round = static_cast<int>(game->GetRoundCount());
 	double money = game->GetMoney();
 	double health = game->GetHealth();
-	int TowerCount = game->GetTowerCount();
+	int TotalTowerCount = game->GetTowerCount();
 
-	Tower* randomTower = nullptr;
-	short randomTowerIndex = 0;
+	Tower* tower = nullptr;
+	short towerIndex = 0;
 
-	short currentTowerIndex = 0;
+	short currentTowerCount = 0;
 	game->RandomizeTowers();
-	while (currentTowerIndex < TowerCount) // Loop through all towers to see if able to be upgraded
+	while (currentTowerCount < TotalTowerCount) // Loop through all towers to see if able to be upgraded
 	{
-		randomTowerIndex = game->GetRandomTowerIndex(currentTowerIndex);
-		randomTower = game->GetRandomTower(currentTowerIndex);
+		towerIndex = game->GetRandomTowerIndex(currentTowerCount);
+		tower = game->GetTower(towerIndex);
 
 		short currentPath = 0;
-		const int towerId = randomTower->GetId();
+		const int towerId = tower->GetId();
 
 		std::shuffle(PATHS.begin(), PATHS.end(), Random::GetEngine());
 		while (currentPath < 3)
 		{
 			const int path = PATHS[currentPath];
 
-			short LatestPath = randomTower->GetUpgradePath()[path];
+			short LatestPath = tower->GetUpgradePath()[path];
 
-			if (game->UpgradeTower(randomTower, path)) // Could try to remove double check valid path
+			if (game->UpgradeTower(tower, path)) // Could try to remove double check valid path
 			{
 				return true;
 			}
-			if (randomTower->IsValidPath(path))
+			if (tower->IsValidPath(path))
 			{
-				bool gotUpgradeRound = GetUpgradeRound(game, randomTowerIndex, game->MultiplyDefaultPrice(TOWER_UPGRADE[towerId][path][LatestPath]), path);
+				bool gotUpgradeRound = GetUpgradeRound(game, tower, towerIndex, game->MultiplyDefaultPrice(TOWER_UPGRADE[towerId][path][LatestPath]), path);
 				if (gotUpgradeRound)
 				{
 					return true;
@@ -342,14 +348,27 @@ bool Bot::SaveForRandomUpgrade(Game* game)
 			}
 			currentPath++;
 		}
-		currentTowerIndex++;
-		std::cout << "Next tower: " << currentTowerIndex << "\n";
+		currentTowerCount++;
+		//std::cout << "Next tower: " << towerCount << "\n";
 	}
 	return false;
 }
 
 void Bot::Save()
 {
-	/*json saveJson;
-	saveJson["Towers"] = json::parse(previousActions);*/
+	json saveJson;
+	//saveJson["Towers"] = json::parse(previousActions);
+	//std::cout << saveJson.dump();
+
+	json actionJson;
+	for (int i = 0; i < previousActions.size(); i++)
+	{
+		actionJson += previousActions[i]->toJson();
+		delete previousActions[i];
+		previousActions.erase(previousActions.begin() + i);
+	}
+	saveJson["Actions"] = actionJson;
+
+	std::ofstream o("t.json");
+	o << std::setw(4) << saveJson << std::endl;
 }

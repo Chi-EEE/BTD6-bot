@@ -17,7 +17,7 @@ public:
 	bool IsValidPath(short path);
 
 	Vector2 GetPosition() { return Position; }
-	int GetId() { return Id; }
+	short GetId() { return Id; }
 
 	std::array<short, 3> GetUpgradePath() { return UpgradePath; }
 
@@ -26,7 +26,7 @@ public:
 	TowerName getTowerName() { return Name; }
 private:
 	TowerName Name;
-	int Id;
+	short Id;
 	std::array<short, 3> UpgradePath = { 0, 0, 0 };
 
 	short pathsUpgraded = 0;

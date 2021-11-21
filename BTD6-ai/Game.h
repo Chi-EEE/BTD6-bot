@@ -27,11 +27,11 @@ public:
 
 	void RandomizeTowers();
 
-	Tower* GetRandomTower(short indexCount);
+	Tower* GetTower(short towerIndex);
 
 	short GetRandomTowerIndex(short indexCount);
 
-	bool PlaceTower(TowerName TowerName, Vector2 Position);
+	Tower* PlaceTower(TowerName TowerName, Vector2 Position);
 
     bool UpgradeTower(Tower* tower, short path);
 
@@ -40,8 +40,6 @@ public:
 	void StartNextRound();
 
 	void AddTower(Tower tower);
-
-	std::vector<Tower> getTowers() { return towers; }
 
 	Vector2 GetPlayPosition() { return playBoxPosition; }
 	Vector2 GetPlaySize() { return playBoxSize; }

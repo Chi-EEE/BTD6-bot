@@ -11,3 +11,8 @@ Vector2::Vector2(int newX, int newY)
 	X = newX;
 	Y = newY;
 }
+
+json Vector2::toJson()
+{
+	return json{ {"X", X}, {"Y", Y} };
+}

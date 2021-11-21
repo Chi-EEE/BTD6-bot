@@ -1,0 +1,31 @@
+{
+    "Actions": [
+        {
+            "Id": 0,
+            "Position": {
+                "X": 0,
+                "Y": 0
+            },
+            "Round": 0,
+            "Type": 0
+        },
+        {
+            "Id": 3,
+            "Position": {
+                "X": 0,
+                "Y": 32763
+            },
+            "Round": 9,
+            "Type": 0
+        },
+        {
+            "Id": 2,
+            "Position": {
+                "X": 0,
+                "Y": 0
+            },
+            "Round": 9,
+            "Type": 0
+        }
+    ]
+}

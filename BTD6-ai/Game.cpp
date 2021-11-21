@@ -26,8 +26,8 @@ void Game::GetPositions()
 	playBoxPosition = Vector2{ clientPosition.X + left_margin, clientPosition.Y + top_margin };
 	playBoxSize = Vector2{ clientSize.X - left_margin - right_margin, clientSize.Y - top_margin - bottom_margin };
 
-	DebuildPosition = Vector2{ clientSize.X + 200, clientSize.Y + 101 };
-}
+	DebuildPosition = Vector2{ windowPosition.left + 1375, windowPosition.top + 875 };
+} // BEFORE MAKING JSON DO POSITIONS FIRST
 
 void Game::GetMemoryAddresses()
 {
@@ -88,9 +88,9 @@ void Game::RandomizeTowers() // Error when there is no tower in array
 	std::shuffle(randomTowerIndexes.begin(), randomTowerIndexes.end(), Random::GetEngine());
 }
 
-Tower* Game::GetRandomTower(short indexCount)
+Tower* Game::GetTower(short towerIndex)
 {
-	return &towers[randomTowerIndexes[indexCount]];
+	return &towers[towerIndex];
 }
 
 short Game::GetRandomTowerIndex(short indexCount)
@@ -105,7 +105,7 @@ short Game::GetRandomTowerIndex(short indexCount)
 /// <param name="TowerName"></param>
 /// <param name="Position"></param>
 /// <returns></returns>
-bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
+Tower* Game::PlaceTower(TowerName TowerName, Vector2 Position)
 {
 	int towerId = static_cast<int>(TowerName);
 	const int TowerBuildCost = MultiplyDefaultPrice(TOWER_BASE_COST[towerId]);
@@ -128,13 +128,12 @@ bool Game::PlaceTower(TowerName TowerName, Vector2 Position)
 		{
 			Tower newTower = Tower{ TowerName, Position, roundCount };
 			towers.push_back(newTower);
-			std::cout << "Built tower id: " << static_cast<int>(TowerName) << "\n";
-			return true;
+			return &newTower;
 		}
 		checkAttempts++;
 		Clock::wait(0.1f);
 	}
-	return false;
+	return nullptr;
 }
 
 bool Game::UpgradeTower(Tower* tower, short path)
