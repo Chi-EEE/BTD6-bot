@@ -139,7 +139,7 @@ bool Bot::BuyHero(Game* game)
 	if (game->CanBuildTower(TowerName::Hero))
 	{
 		int buildAttempts = 0;
-		Tower* tower = false;
+		Tower* tower = nullptr;
 
 		// Keep on building until reached MaximumBuildAttempts
 		while (buildAttempts < MaximumBuildAttempts)

@@ -107,9 +107,6 @@
     <ClInclude Include="BuildAction.h">
       <Filter>Header Files\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="nlohmann\json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

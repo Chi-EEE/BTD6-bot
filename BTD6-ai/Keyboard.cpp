@@ -32,7 +32,7 @@ INPUT Keyboard::keyPress(const WORD scanCode)
 	return input;
 }
 
-void Keyboard::keyRelease(const INPUT input)
+void Keyboard::keyRelease(INPUT input)
 {
 	input.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
 

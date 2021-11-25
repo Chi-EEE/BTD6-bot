@@ -163,7 +163,6 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Mouse.h" />
-    <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Region.h" />
     <ClInclude Include="Tower.h" />
