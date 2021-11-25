@@ -8,14 +8,14 @@ BuildAction::BuildAction(BuildAction* buildAction)
 	type = ActionType::Build;
 }
 
-BuildAction::BuildAction(int t_round, TowerName t_towerName)
+BuildAction::BuildAction(const int t_round, const TowerName t_towerName)
 {
 	round = t_round;
 	towerName = t_towerName;
 	type = ActionType::Build;
 }
 
-BuildAction::BuildAction(int t_round, TowerName t_towerName, Vector2 t_position)
+BuildAction::BuildAction(const int t_round, const TowerName t_towerName, const Vector2 t_position)
 {
 	round = t_round;
 	towerName = t_towerName;

@@ -49,7 +49,7 @@ public:
 	/// </summary>
 	/// <param name="procId">process id</param>
 	/// <returns>handle</returns>
-	static HANDLE GetHandle(DWORD64 procId)
+	static HANDLE GetHandle(const DWORD64 procId)
 	{
 		HANDLE handle = OpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, procId);
 		if (!handle)
@@ -68,7 +68,7 @@ public:
 	/// </summary>
 	/// <param name="procId"></param>
 	/// <param name="modName"></param>
-	uintptr_t GetModuleBaseAddress(DWORD64 procId, const wchar_t* modName)
+	uintptr_t GetModuleBaseAddress(const DWORD64 procId, const wchar_t* modName)
 	{
 		uintptr_t modBaseAddr = 0;
 		HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
@@ -121,7 +121,7 @@ public:
 	/// <param name="answer"></param>
 	/// <returns></returns>
 	template <class T>
-	char* ScanForValue(HANDLE handle, T answer)
+	char* ScanForValue(const HANDLE handle, const T answer)
 	{
 		int regionIndex = 0;
 		char* baseAddress = NULL;
@@ -160,7 +160,7 @@ public:
 	/// <param name="answer"></param>
 	/// <returns></returns>
 	template <class T>
-	void ScanForValues(HANDLE handle, T answer, std::vector <char*> &results)
+	void ScanForValues(const HANDLE handle, const T answer, std::vector <char*> &results)
 	{
 		int regionIndex = 0;
 		char* baseAddress = NULL;
@@ -191,7 +191,7 @@ public:
 	}
 
 	///https://www.cheatengine.org/forum/viewtopic.php?t=594721&sid=ae3fce06e7e08b8cae23afd8c2141974
-	char* ReadOffsets(HANDLE handle, char* baseAddress, std::vector<int> offsets)
+	char* ReadOffsets(const HANDLE handle, char* baseAddress, std::vector<int> offsets)
 	{
 		char* finalAddress = 0;
 		char* tempAddress = 0;

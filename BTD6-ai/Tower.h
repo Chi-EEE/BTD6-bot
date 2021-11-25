@@ -10,18 +10,18 @@
 class Tower
 {
 public:
-	Tower(TowerName t_TowerName, Vector2 t_Position, double t_RoundBuilt);
+	Tower(const TowerName t_TowerName, const Vector2 t_Position, const double t_RoundBuilt);
 
-	void ChangePosition(Vector2 t_position);
+	void ChangePosition(const Vector2 t_position);
 
-	bool IsValidPath(short path);
+	bool IsValidPath(const short path);
 
 	Vector2 GetPosition() { return Position; }
 	short GetId() { return Id; }
 
 	std::array<short, 3> GetUpgradePath() { return UpgradePath; }
 
-	void IncreasePath(short path, double currentRound);
+	void IncreasePath(const short path, const double currentRound);
 	
 	TowerName getTowerName() { return Name; }
 private:

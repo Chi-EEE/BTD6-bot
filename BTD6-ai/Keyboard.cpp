@@ -18,7 +18,7 @@
 //	SPACE_SCAN_CODE = MapVirtualKeyA(SPACE_KEY_CODE, 4);
 //}
 
-INPUT Keyboard::keyPress(WORD scanCode)
+INPUT Keyboard::keyPress(const WORD scanCode)
 {
 	//Generic key event
 	INPUT input;
@@ -32,7 +32,7 @@ INPUT Keyboard::keyPress(WORD scanCode)
 	return input;
 }
 
-void Keyboard::keyRelease(INPUT input)
+void Keyboard::keyRelease(const INPUT input)
 {
 	input.ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
 

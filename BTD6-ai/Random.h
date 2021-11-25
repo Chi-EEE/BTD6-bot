@@ -4,7 +4,7 @@
 class Random {
 public:
 	template <typename T>
-	static T getValue(T min, T max) {
+	static T getValue(const T min, const T max) {
 		static_assert(std::is_integral<T>::value, "Not an integral type");
 		std::uniform_int_distribution<T> dist(min, max);
 		return dist(GetEngine());

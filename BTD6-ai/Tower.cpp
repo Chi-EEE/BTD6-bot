@@ -5,7 +5,7 @@
 #include "Clock.h"
 #include "Mouse.h"
 #include "Keyboard.h"
-Tower::Tower(TowerName t_TowerName, Vector2 t_Position, double t_RoundBuilt)
+Tower::Tower(const TowerName t_TowerName, const Vector2 t_Position, const double t_RoundBuilt)
 { 
 	Name = t_TowerName;
 	Id = static_cast<int>(t_TowerName);
@@ -13,12 +13,12 @@ Tower::Tower(TowerName t_TowerName, Vector2 t_Position, double t_RoundBuilt)
 	RoundBuilt = t_RoundBuilt;
 }
 
-void Tower::ChangePosition(Vector2 t_position)
+void Tower::ChangePosition(const Vector2 t_position)
 {
 	Position = t_position;
 }
 
-bool Tower::IsValidPath(short path)
+bool Tower::IsValidPath(const short path)
 {
 	if (pathsUpgraded >= 2)
 	{
@@ -40,7 +40,7 @@ bool Tower::IsValidPath(short path)
 /// [MAKE SURE TO CALL IsValidPath before this function]
 /// </summary>
 /// <param name="path"></param>
-void Tower::IncreasePath(short path, double currentRound)
+void Tower::IncreasePath(const short path, const double currentRound)
 {
 	pathsUpgraded++;
 	UpgradePath[path]++;

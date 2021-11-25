@@ -70,7 +70,7 @@ int Game::GetTowerCount()
 	return towerCount;
 }
 
-int Game::MultiplyDefaultPrice(double defaultPrice)
+int Game::MultiplyDefaultPrice(const double defaultPrice)
 {
 	return static_cast<int>(((defaultPrice * DIFFICULTY_MULTIPLIER[DIFFICULTY])) / 5) * 5;
 }
@@ -88,12 +88,12 @@ void Game::RandomizeTowers() // Error when there is no tower in array
 	std::shuffle(randomTowerIndexes.begin(), randomTowerIndexes.end(), Random::GetEngine());
 }
 
-Tower* Game::GetTower(short towerIndex)
+Tower* Game::GetTower(const short towerIndex)
 {
 	return &towers[towerIndex];
 }
 
-short Game::GetRandomTowerIndex(short indexCount)
+short Game::GetRandomTowerIndex(const short indexCount)
 {
 	return randomTowerIndexes[indexCount];
 }
@@ -105,7 +105,7 @@ short Game::GetRandomTowerIndex(short indexCount)
 /// <param name="TowerName"></param>
 /// <param name="Position"></param>
 /// <returns></returns>
-Tower* Game::PlaceTower(TowerName TowerName, Vector2 Position)
+Tower* Game::PlaceTower(const TowerName TowerName, const Vector2 Position)
 {
 	int towerId = static_cast<int>(TowerName);
 	const int TowerBuildCost = MultiplyDefaultPrice(TOWER_BASE_COST[towerId]);
@@ -136,7 +136,7 @@ Tower* Game::PlaceTower(TowerName TowerName, Vector2 Position)
 	return nullptr;
 }
 
-bool Game::UpgradeTower(Tower* tower, short path)
+bool Game::UpgradeTower(Tower* tower, const short path)
 {
 	short LatestPath = tower->GetUpgradePath()[path];
 	const int TowerUpgradeCost = MultiplyDefaultPrice(TOWER_UPGRADE[tower->GetId()][path][LatestPath]);
@@ -168,7 +168,7 @@ bool Game::UpgradeTower(Tower* tower, short path)
 	return false;
 }
 
-bool Game::CanBuildTower(TowerName TowerName)
+bool Game::CanBuildTower(const TowerName TowerName)
 {
 	int towerId = static_cast<int>(TowerName);
 	
@@ -182,7 +182,7 @@ void Game::StartNextRound()
 	Keyboard::keyRelease(input);
 }
 
-void Game::AddTower(Tower tower)
+void Game::AddTower(const Tower tower)
 {
 	towers.push_back(tower);
 }

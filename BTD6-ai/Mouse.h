@@ -5,8 +5,8 @@
 class Mouse
 {
 public:
-	static void setPosition(int t_x, int t_y);
-	static void setPosition(Vector2 t_position);
+	static void setPosition(const int t_x, const int t_y);
+	static void setPosition(const Vector2 t_position);
 	static void leftMouseDown();
 	static void leftMouseUp();
 private:

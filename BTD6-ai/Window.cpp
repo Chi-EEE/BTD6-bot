@@ -14,14 +14,14 @@ HWND Window::GetHwnd(const char* windowName)
 }
 
 //https://stackoverflow.com/questions/49543452/how-to-get-the-client-window-position-using-the-winapi
-RECT Window::GetRect(HWND hwnd)
+RECT Window::GetRect(const HWND hwnd)
 {
 	RECT windowRect = RECT{};
 	MapWindowPoints(hwnd, NULL, (LPPOINT)&windowRect, 2);
 	return windowRect;
 }
 
-RECT Window::GetSizeRect(HWND hwnd)
+RECT Window::GetSizeRect(const HWND hwnd)
 {
 	RECT windowSize = RECT{};
 	GetClientRect(hwnd, &windowSize); // Right, Bottom 

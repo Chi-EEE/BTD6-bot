@@ -6,7 +6,7 @@ class Vector2
 {
 public:
 	Vector2();
-    Vector2(int newX, int newY);
+    Vector2(const int newX, const int newY);
 
 	json toJson();
 

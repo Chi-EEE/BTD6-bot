@@ -273,7 +273,7 @@ bool Bot::UpgradeRandomTower(Game* game)
 	return false;
 }
 
-bool Bot::GetUpgradeRound(Game* game, Tower* tower, short towerIndex, double upgradePrice, short path)
+bool Bot::GetUpgradeRound(Game* game, Tower* tower, const short towerIndex, const double upgradePrice, const short path)
 {
 	double money = game->GetMoney();
 	double health = game->GetHealth();

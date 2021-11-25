@@ -23,23 +23,23 @@ public:
 	double GetRoundCount();
 	int GetTowerCount();
 
-	int MultiplyDefaultPrice(double defaultPrice);
+	int MultiplyDefaultPrice(const double defaultPrice);
 
 	void RandomizeTowers();
 
-	Tower* GetTower(short towerIndex);
+	Tower* GetTower(const short towerIndex);
 
-	short GetRandomTowerIndex(short indexCount);
+	short GetRandomTowerIndex(const short indexCount);
 
-	Tower* PlaceTower(TowerName TowerName, Vector2 Position);
+	Tower* PlaceTower(const TowerName TowerName, const Vector2 Position);
 
-    bool UpgradeTower(Tower* tower, short path);
+    bool UpgradeTower(Tower* tower, const short path);
 
-	bool CanBuildTower(TowerName TowerName);
+	bool CanBuildTower(const TowerName TowerName);
 
 	void StartNextRound();
 
-	void AddTower(Tower tower);
+	void AddTower(const Tower tower);
 
 	Vector2 GetPlayPosition() { return playBoxPosition; }
 	Vector2 GetPlaySize() { return playBoxSize; }
