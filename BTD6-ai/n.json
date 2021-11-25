@@ -1,0 +1,109 @@
+{
+    "Actions": [
+        {
+            "Id": 0,
+            "Position": {
+                "X": 96,
+                "Y": 0
+            },
+            "Round": 0,
+            "Type": 0
+        },
+        {
+            "Path": 1,
+            "Round": 5,
+            "TowerIndex": 3,
+            "Type": 1
+        },
+        {
+            "Id": 18,
+            "Position": {
+                "X": 481312867,
+                "Y": 32763
+            },
+            "Round": 12,
+            "Type": 0
+        },
+        {
+            "Id": 12,
+            "Position": {
+                "X": 481312867,
+                "Y": 32763
+            },
+            "Round": 16,
+            "Type": 0
+        },
+        {
+            "Id": 1,
+            "Position": {
+                "X": 96,
+                "Y": 0
+            },
+            "Round": 16,
+            "Type": 0
+        },
+        {
+            "Path": 2,
+            "Round": 19,
+            "TowerIndex": 5,
+            "Type": 1
+        },
+        {
+            "Path": 0,
+            "Round": 23,
+            "TowerIndex": 5,
+            "Type": 1
+        },
+        {
+            "Id": 11,
+            "Position": {
+                "X": 481312867,
+                "Y": 32763
+            },
+            "Round": 29,
+            "Type": 0
+        },
+        {
+            "Id": 16,
+            "Position": {
+                "X": 96,
+                "Y": 0
+            },
+            "Round": 30,
+            "Type": 0
+        },
+        {
+            "Path": 0,
+            "Round": 34,
+            "TowerIndex": 13,
+            "Type": 1
+        },
+        {
+            "Id": 2,
+            "Position": {
+                "X": 96,
+                "Y": 0
+            },
+            "Round": 37,
+            "Type": 0
+        },
+        {
+            "Id": 5,
+            "Position": {
+                "X": 96,
+                "Y": 0
+            },
+            "Round": 39,
+            "Type": 0
+        },
+        {
+            "Id": 5,
+            "Position": {
+                "X": 96,
+                "Y": 0
+            },
+            "Round": 41,
+            "Type": 0
+        }
+    ]
+}

@@ -112,7 +112,10 @@ Tower* Game::PlaceTower(const TowerName TowerName, const Vector2 Position)
 	const int previousTowerCount = towerCount;
 	INPUT input = Keyboard::keyPress(MapVirtualKeyA(TOWER_KEY_CODE[towerId], 4)); // Getting the SCAN Code in real time
 
-	Mouse::setPosition(Position);
+	std::cout << Position.X << ", " << Position.Y << "-zzzz----------\n";
+	Vector2 ac = ToAbsolutePosition(Position);
+	std::cout << ac.X << ", " << ac.Y << "-xxxx----------\n";
+	Mouse::setPosition(ac);
 	Mouse::leftMouseDown();
 
 	Clock::wait(.3f);
@@ -144,7 +147,7 @@ bool Game::UpgradeTower(Tower* tower, const short path)
 	{
 		std::cout << "Path " << path << " cost / Latest Path: " << LatestPath << ": " << TowerUpgradeCost << " bought with " << money << "\n";
 		// use the , . / buttons to upgrade.
-		Mouse::setPosition(tower->GetPosition());
+		Mouse::setPosition(ToAbsolutePosition(tower->GetRelativePosition()));
 
 		Mouse::leftMouseDown();
 		Clock::wait(.1f);
@@ -185,4 +188,14 @@ void Game::StartNextRound()
 void Game::AddTower(const Tower tower)
 {
 	towers.push_back(tower);
+}
+
+Vector2 Game::ToRelativePosition(Vector2 AbsolutePosition)
+{
+	return AbsolutePosition - playBoxPosition;
+}
+
+Vector2 Game::ToAbsolutePosition(Vector2 RelativePosition)
+{
+	return RelativePosition + playBoxPosition;
 }

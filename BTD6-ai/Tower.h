@@ -16,7 +16,7 @@ public:
 
 	bool IsValidPath(const short path);
 
-	Vector2 GetPosition() { return Position; }
+	Vector2 GetRelativePosition() { return RelativePosition; }
 	short GetId() { return Id; }
 
 	std::array<short, 3> GetUpgradePath() { return UpgradePath; }
@@ -36,6 +36,6 @@ private:
 	std::vector<int> PathsUpgraded;
 	std::vector<double> RoundsUpgraded;
 
-	Vector2 Position;
+	Vector2 RelativePosition;
 };
 

@@ -10,7 +10,7 @@
 2 : Hard
 3 : Impoppable
 */
-static const short DIFFICULTY = 0;
+static const short DIFFICULTY = 1;
 
 static const double Buy_Chance = 50;
 
@@ -46,7 +46,7 @@ static std::vector<TowerName> ALLOWED_TOWERS =
 	TowerName::Tack_Shooter,
 	TowerName::Ice_Monkey,
 	TowerName::Glue_Gunner,
-	/*TowerName::Sniper_Monkey,
+	TowerName::Sniper_Monkey,
 	TowerName::Monkey_Sub,
 	TowerName::Monkey_Buccaneer,
 	TowerName::Monkey_Ace,
@@ -60,7 +60,7 @@ static std::vector<TowerName> ALLOWED_TOWERS =
 	TowerName::Druid,
 	TowerName::Spike_Factory,
 	TowerName::Monkey_Village,
-	TowerName::Engineer_Monkey*/
+	TowerName::Engineer_Monkey
 };
 
 static std::array<short, 3> PATHS = { 0, 1, 2 };

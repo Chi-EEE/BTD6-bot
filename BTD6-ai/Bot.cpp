@@ -10,14 +10,13 @@
 
 Vector2 Bot::GetRandomPosition()
 {
-	int x_axis = ClientPosition.X + Random::getValue(1, ClientSize.X);
-	int y_axis = ClientPosition.Y + Random::getValue(1, ClientSize.Y);
+	int x_axis = Random::getValue(1, ClientSize.X);
+	int y_axis = Random::getValue(1, ClientSize.Y);
 	return Vector2{ x_axis, y_axis };
 }
 
 Bot::Bot(Game* game)
 {
-	ClientPosition = game->GetPlayPosition();
 	ClientSize = game->GetPlaySize();
 }
 
@@ -57,7 +56,7 @@ void Bot::run(Game* game)
 							{
 								std::cout << "[BUILD][PURCHASED]: " << static_cast<int>(towerName) << "\n";
 
-								currentBuildAction->setPosition(tower->GetPosition());
+								currentBuildAction->setPosition(tower->GetRelativePosition());
 								previousActions.push_back(new BuildAction{ currentBuildAction });
 								break;
 							}
@@ -148,7 +147,7 @@ bool Bot::BuyHero(Game* game)
 			if (tower)
 			{
 				std::cout << " Tower ID:[" << static_cast<int>(TowerName::Hero) << "]\n";
-				previousActions.push_back(new BuildAction{ static_cast<int>(round), TowerName::Hero, tower->GetPosition() });
+				previousActions.push_back(new BuildAction{ static_cast<int>(round), TowerName::Hero, tower->GetRelativePosition() });
 				return true;
 			}
 			buildAttempts++;
@@ -182,7 +181,7 @@ bool Bot::BuyRandomTower(Game* game)
 				{
 					std::cout << " Tower ID:[" << static_cast<int>(ALLOWED_TOWERS[currentTowerCount]) << "]\n";
 
-					previousActions.push_back(new BuildAction{ static_cast<int>(round), towerName, tower->GetPosition() });
+					previousActions.push_back(new BuildAction{ static_cast<int>(round), towerName, tower->GetRelativePosition() });
 					return true;
 				}
 				buildAttempts++;
@@ -369,6 +368,6 @@ void Bot::Save()
 	}
 	saveJson["Actions"] = actionJson;
 
-	std::ofstream o("t.json");
+	std::ofstream o("sn.json");
 	o << std::setw(4) << saveJson << std::endl;
 }

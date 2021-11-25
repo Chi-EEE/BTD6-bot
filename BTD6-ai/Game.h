@@ -41,7 +41,9 @@ public:
 
 	void AddTower(const Tower tower);
 
-	Vector2 GetPlayPosition() { return playBoxPosition; }
+	Vector2 ToRelativePosition(Vector2 AbsolutePosition);
+	Vector2 ToAbsolutePosition(Vector2 RelativePosition);
+
 	Vector2 GetPlaySize() { return playBoxSize; }
 private:
 

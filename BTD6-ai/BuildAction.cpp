@@ -25,5 +25,5 @@ BuildAction::BuildAction(const int t_round, const TowerName t_towerName, const V
 
 json BuildAction::toJson()
 {
-	return json{ {"Type", 0}, {"Round", round}, {"Id", static_cast<int>(towerName)}, {"Position", Position.toJson()}};
+	return json{ {"Type", 0}, {"Round", round}, {"TowerId", static_cast<int>(towerName)}, {"Position", Position.toJson()}};
 }
