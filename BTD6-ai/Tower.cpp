@@ -9,13 +9,13 @@ Tower::Tower(const TowerName t_TowerName, const Vector2 t_Position, const double
 { 
 	Name = t_TowerName;
 	Id = static_cast<int>(t_TowerName);
-	Position = t_Position;
+	RelativePosition = t_Position;
 	RoundBuilt = t_RoundBuilt;
 }
 
 void Tower::ChangePosition(const Vector2 t_position)
 {
-	Position = t_position;
+	RelativePosition = t_position;
 }
 
 bool Tower::IsValidPath(const short path)

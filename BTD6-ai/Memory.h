@@ -203,7 +203,7 @@ public:
 			std::cout << "oh\n";
 		}
 
-		for (int i = 1; i < offsets.size() - 1; i++)
+		for (int i = 1; i < offsets.size() - 1; ++i)
 		{
 			bool success = ReadProcessMemory(handle, tempAddress + offsets[i], &finalAddress, sizeof(finalAddress), NULL);
 			if (!success)

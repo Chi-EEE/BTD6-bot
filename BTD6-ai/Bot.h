@@ -14,7 +14,7 @@ class Bot
 {
 public:
     Bot(Game* game);
-	void run(Game* game);
+	void run(Game* const game);
 	bool BuyHero(Game* game);
 	bool BuyRandomTower(Game* game);
 	bool SaveForRandomTower(Game* game);

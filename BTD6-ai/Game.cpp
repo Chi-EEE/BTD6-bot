@@ -80,7 +80,7 @@ void Game::RandomizeTowers() // Error when there is no tower in array
 	//if (randomTowerIndexes.size() != towers.size())
 	//{
 		randomTowerIndexes.clear();
-		for (short i = 0; i < towers.size(); i++)
+		for (short i = 0; i < towers.size(); ++i)
 		{
 			randomTowerIndexes.push_back(i);
 		}

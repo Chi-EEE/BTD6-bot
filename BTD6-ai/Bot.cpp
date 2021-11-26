@@ -20,7 +20,7 @@ Bot::Bot(Game* game)
 	ClientSize = game->GetPlaySize();
 }
 
-void Bot::run(Game* game)
+void Bot::run(Game* const game)
 {
 	double previousRound = 0;
 	int currentRound = static_cast<int>(game->GetRoundCount());
@@ -41,17 +41,16 @@ void Bot::run(Game* game)
 				{
 				case ActionType::Build:
 				{
-					BuildAction* currentBuildAction = (BuildAction*)actions.front();
+					BuildAction* currentBuildAction = static_cast <BuildAction*> (actions.front());
 					TowerName towerName = currentBuildAction->getTowerName();
 					if (game->CanBuildTower(towerName))
 					{
 						int buildAttempts = 0;
-						Tower* tower = nullptr;
 
 						// Keep on building until reached MaximumBuildAttempts
 						while (buildAttempts < MaximumBuildAttempts)
 						{
-							tower = game->PlaceTower(towerName, GetRandomPosition());
+							Tower* tower = game->PlaceTower(towerName, GetRandomPosition());
 							if (tower)
 							{
 								std::cout << "[BUILD][PURCHASED]: " << static_cast<int>(towerName) << "\n";
@@ -69,7 +68,7 @@ void Bot::run(Game* game)
 				break;
 				case ActionType::Upgrade:
 				{
-					UpgradeAction* currentUpgradeAction = (UpgradeAction*)actions.front();
+					UpgradeAction* currentUpgradeAction = static_cast <UpgradeAction*> (actions.front());
 					Tower* currentTower = game->GetTower(currentUpgradeAction->getTowerIndex());
 
 					if (game->UpgradeTower(currentTower, currentUpgradeAction->getPath()))
@@ -138,12 +137,11 @@ bool Bot::BuyHero(Game* game)
 	if (game->CanBuildTower(TowerName::Hero))
 	{
 		int buildAttempts = 0;
-		Tower* tower = nullptr;
 
 		// Keep on building until reached MaximumBuildAttempts
 		while (buildAttempts < MaximumBuildAttempts)
 		{
-			tower = game->PlaceTower(TowerName::Hero, GetRandomPosition());
+			Tower* tower = game->PlaceTower(TowerName::Hero, GetRandomPosition());
 			if (tower)
 			{
 				std::cout << " Tower ID:[" << static_cast<int>(TowerName::Hero) << "]\n";
@@ -171,12 +169,11 @@ bool Bot::BuyRandomTower(Game* game)
 		if (game->CanBuildTower(towerName))
 		{
 			int buildAttempts = 0;
-			Tower* tower = nullptr;
 
 			// Keep on building until reached MaximumBuildAttempts
 			while (buildAttempts < MaximumBuildAttempts)
 			{
-				tower = game->PlaceTower(towerName, GetRandomPosition());
+				Tower* tower = game->PlaceTower(towerName, GetRandomPosition());
 				if (tower)
 				{
 					std::cout << " Tower ID:[" << static_cast<int>(ALLOWED_TOWERS[currentTowerCount]) << "]\n";
@@ -242,7 +239,6 @@ bool Bot::UpgradeRandomTower(Game* game)
 	int TowerCount = game->GetTowerCount();
 
 	short towerIndex = 0;
-	Tower* randomTower = nullptr;
 
 	bool upgradedTower = false;
 	short currentTowerIndex = 0;
@@ -251,7 +247,7 @@ bool Bot::UpgradeRandomTower(Game* game)
 	while (currentTowerIndex < TowerCount) // Loop through all towers to see if able to be upgraded
 	{
 		towerIndex = game->GetRandomTowerIndex(currentTowerIndex);
-		randomTower = game->GetTower(towerIndex);
+		Tower* randomTower = game->GetTower(towerIndex);
 
 		std::shuffle(PATHS.begin(), PATHS.end(), Random::GetEngine());
 		short currentPath = 0;
@@ -313,7 +309,6 @@ bool Bot::SaveForRandomUpgrade(Game* game)
 	double health = game->GetHealth();
 	int TotalTowerCount = game->GetTowerCount();
 
-	Tower* tower = nullptr;
 	short towerIndex = 0;
 
 	short currentTowerCount = 0;
@@ -321,7 +316,7 @@ bool Bot::SaveForRandomUpgrade(Game* game)
 	while (currentTowerCount < TotalTowerCount) // Loop through all towers to see if able to be upgraded
 	{
 		towerIndex = game->GetRandomTowerIndex(currentTowerCount);
-		tower = game->GetTower(towerIndex);
+		Tower* tower = game->GetTower(towerIndex);
 
 		short currentPath = 0;
 		const int towerId = tower->GetId();
@@ -360,7 +355,7 @@ void Bot::Save()
 	//std::cout << saveJson.dump();
 
 	json actionJson;
-	for (int i = 0; i < previousActions.size(); i++)
+	for (int i = 0; i < previousActions.size(); ++i)
 	{
 		actionJson += previousActions[i]->toJson();
 		delete previousActions[i];

@@ -1,7 +1,6 @@
 #pragma once
 #include "Action.h"
 #include "ActionType.h"
-#include "Tower.h"
 
 class UpgradeAction : public Action
 {
